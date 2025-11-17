@@ -1,0 +1,22 @@
+/* Typewriter effect */
+.typewriter {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid black; /* cursor */
+  width: 0;
+  animation: typing 2s steps(30, end) forwards;
+  transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+/* Hover: desaparecer y volver a escribir */
+.typewriter:hover {
+  width: 0;
+  opacity: 0;
+  animation: typing 2s steps(30, end) forwards 0.2s; /* reescribe */
+}
+
+@keyframes typing {
+  from { width: 0; opacity: 1; }
+  to { width: 100%; opacity: 1; }
+}
