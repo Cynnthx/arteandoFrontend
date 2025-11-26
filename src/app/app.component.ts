@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {RouterEvent, RouterModule, RouterOutlet} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 
@@ -8,6 +8,7 @@ import {CommonModule} from '@angular/common';
   standalone: true,
   imports: [
     RouterOutlet,
+    RouterModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
