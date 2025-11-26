@@ -14,4 +14,15 @@ export class InicioComponent implements OnInit {
   ngOnInit(): void {
     // Código de inicialización
   }
+
+  modalActivo: string | null = null;
+
+  abrirModal(tipo: string) {
+    this.modalActivo = tipo;
+  }
+
+  cerrarModal() {
+    this.modalActivo = null;
+  }
+
 }

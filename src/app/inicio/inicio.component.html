@@ -2,43 +2,60 @@
 
   <!-- Main -->
   <main class="flex flex-1 relative">
+
     <!-- Imagen en la esquina superior izquierda con efecto hover -->
     <img src="logo4-Photoroom.png" alt="Logo"
          class="absolute top-4 left-4 w-60 h-60 object-cover rounded-full shadow-lg transition-transform duration-500 hover:scale-110">
 
+    <!-- TÍTULO IZQUIERDA -->
     <p class="absolute left-0 top-1/2 -translate-y-1/2 translate-x-[310px]
        text-left text-3xl sm:text-4xl md:text-5xl font-extrabold font-black text-black"
        style="-webkit-text-stroke: 1px black; text-shadow: 0 0 4px rgb(255,255,255);">
-      <span class="typewriter">Explora, aprende y</span>
-
+      Explora, aprende y
     </p>
 
     <!-- Sección naranja centrada parcialmente hacia la derecha -->
     <div class="relative w-11/12 md:w-3/4 lg:w-2/3 max-w-[700px] h-[91vh] mx-auto my-auto transform md:translate-x-16 lg:translate-x-20">
+
       <!-- Contenedor naranja -->
       <div class="bg-naranja h-full rounded-lg flex items-center justify-start pl-12 pr-6">
-        <p class="text-black text-3xl sm:text-4xl md:text-5xl font-extrabold font-black
-           leading-snug -translate-x-8 whitespace-nowrap"
+
+        <p class="text-black text-3xl sm:text-4xl md:text-5xl font-extrabold leading-snug -translate-x-8"
            style="-webkit-text-stroke: 1px black; text-shadow: 0 0 4px rgb(255,255,255);">
-          <span class="typewriter">siente el arte</span>        </p>
+          siente el arte
+        </p>
+<!--sin salto de línea-->
+<!--        <p class="text-black text-3xl sm:text-4xl md:text-5xl font-extrabold whitespace-nowrap"-->
+<!--           style="-webkit-text-stroke: 1px black; text-shadow: 0 0 4px rgb(255,255,255); transform: translateX(-2rem);">-->
+<!--          siente el arte-->
+<!--        </p>-->
+
 
         <!-- Imagen -->
         <img src="/varios.jpg"
              alt="Imagen de arte"
-             class="h-100 sm:h-160 md:h-172 object-contain ml-2 sm:ml-5 md:ml-1 transition-transform duration-500 hover:scale-105" />
+             class="h-100 sm:h-160 md:h-172 object-contain ml-2 sm:ml-5 md:ml-1 transition-transform duration-500 hover:scale-105">
       </div>
     </div>
 
     <!-- Botones a la derecha de toda la pantalla -->
     <div class="absolute top-1/2 right-8 transform -translate-y-1/2 flex flex-col items-end space-y-6">
-      <a routerLink="/login" class="text-white bg-black font-bold text-2xl sm:text-3xl md:text-4xl hover:text-gray-200 text-right px-4 py-2 rounded transition-colors duration-300">Login</a>
-      <a routerLink="/explora" class="text-white bg-black font-bold text-2xl sm:text-3xl md:text-4xl hover:text-gray-200 text-right px-4 py-2 rounded transition-colors duration-300">Explora</a>
+
+      <a routerLink="/login"
+         class="text-white bg-black font-bold text-2xl sm:text-3xl md:text-4xl hover:text-gray-200 text-right px-4 py-2 rounded transition-colors duration-300">
+        Login
+      </a>
+
+      <a routerLink="/explora"
+         class="text-white bg-black font-bold text-2xl sm:text-3xl md:text-4xl hover:text-gray-200 text-right px-4 py-2 rounded transition-colors duration-300">
+        Explora
+      </a>
     </div>
 
   </main>
 
   <!-- Footer -->
-  <footer class="bg-black py-8">
+  <footer class="bg-black py-8 relative">
     <div class="container mx-auto px-4 flex items-center justify-between">
 
       <!-- ICONOS IZQUIERDA -->
@@ -53,13 +70,101 @@
         © 2025 Arteando. Todos los derechos reservados.
       </p>
 
-      <!-- LINKS DERECHA -->
+      <!-- LINKS DERECHA - ABREN MODALES -->
       <div class="flex items-center space-x-4 text-white">
-        <a href="/aviso-legal" class="hover:underline">Aviso Legal</a>
-        <a href="/politica-privacidad" class="hover:underline">Política de Privacidad</a>
+        <button (click)="abrirModal('legal')" class="hover:underline">Aviso Legal</button>
+        <button (click)="abrirModal('privacidad')" class="hover:underline">Política de Privacidad</button>
       </div>
 
     </div>
   </footer>
+
+
+  <!-- MODAL - AVISO LEGAL -->
+
+  <div
+    *ngIf="modalActivo === 'legal'"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-black rounded-2xl shadow-2xl p-8 max-w-lg w-full text-center relative animate-fade-in">
+
+      <button
+        class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold"
+        (click)="cerrarModal()"
+      >×</button>
+      <img src="/aviso.gif" class="mx-auto mb-4 w-40 " alt="Logo Granja Gaia" />
+
+      <h2 class="text-2xl font-bold mb-2" style="color:#E07A5F;">
+        Aviso Legal
+      </h2>
+
+      <p class="text-white leading-relaxed">
+        Este sitio web, <strong>Arteando</strong>, es un espacio digital dedicado a la difusión artística.
+        Toda la información, imágenes y recursos aquí publicados pertenecen a sus respectivos autores.
+        El uso indebido, reproducción no autorizada o distribución de cualquier contenido está
+        estrictamente prohibido según la legislación vigente.
+        <br><br>
+        Arteando no se hace responsable del uso que terceros hagan del material disponible en la
+        plataforma. Al acceder a este sitio aceptas cumplir con estas condiciones legales.
+      </p>
+
+      <button
+        (click)="cerrarModal()"
+        class="mt-6 text-white px-6 py-2 rounded-lg transition"
+        style="background-color:#E07A5F;"
+        onmouseover="this.style.backgroundColor='#cc684f'"
+        onmouseout="this.style.backgroundColor='#E07A5F'"
+      >
+        Entendido
+      </button>
+
+    </div>
+
+</div>
+
+
+  <!-- MODAL - POLÍTICA PRIVACIDAD -->
+
+  <div
+    *ngIf="modalActivo === 'privacidad'"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full text-center relative animate-fade-in">
+
+      <button
+        class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold"
+        (click)="cerrarModal()"
+      >×</button>
+      <img src="/modal.gif" class="mx-auto mb-4 w-40 " alt="Logo Granja Gaia" />
+
+
+      <h2 class="text-2xl font-bold mb-2" style="color:#E07A5F;">
+        Política de Privacidad
+      </h2>
+
+      <p class="text-gray-700 leading-relaxed">
+        En <strong>Arteando</strong> respetamos tu privacidad. Los datos personales que ingreses en
+        nuestra plataforma serán utilizados únicamente con fines de navegación, mejora de la experiencia
+        y comunicación directa contigo cuando sea necesario.
+        <br><br>
+        No compartimos tu información con terceros y puedes solicitar en cualquier momento la
+        modificación o eliminación de tus datos. Al utilizar Arteando, aceptas nuestra política de
+        tratamiento responsable y seguro de la información.
+      </p>
+
+      <button
+        (click)="cerrarModal()"
+        class="mt-6 text-white px-6 py-2 rounded-lg transition"
+        style="background-color:#E07A5F;"
+        onmouseover="this.style.backgroundColor='#cc684f'"
+        onmouseout="this.style.backgroundColor='#E07A5F'"
+      >
+        Entendido
+      </button>
+
+    </div>
+
+</div>
+
 
 </div>
