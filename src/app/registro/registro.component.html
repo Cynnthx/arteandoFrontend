@@ -1,0 +1,221 @@
+<div class="min-h-screen bg-fondo flex flex-col relative">
+
+  <!-- Imagen a la derecha, centrada -->
+  <img src="/monalisa_davinci.jpg"
+       alt="Imagen derecha centrada"
+       class="absolute right-4 top-1/2 w-96 md:w-[28rem] lg:w-[32rem] h-auto object-contain rounded-lg shadow-lg transition-transform duration-500 transform -translate-y-[57%]">
+  >
+
+  <!-- Main -->
+  <main class="flex flex-1 relative items-center justify-center">
+
+    <!-- Logo superior izquierda -->
+    <img src="logo2-Photoroom.png" alt="Logo"
+         class="absolute top-4 left-4 w-60 h-60 object-cover rounded-full shadow-lg transition-transform duration-500 hover:scale-110">
+
+    <!-- Contenedor verde centrado -->
+    <div class="relative w-10/12 max-w-[700px] h-[91vh] mx-auto flex items-center justify-center"
+         style="background-color: #81B29A; border-radius: 1rem;">
+
+      <!-- FORMULARIO REGISTRO -->
+      <div class="w-full max-w-md mx-auto rounded-lg p-8"
+           style="background-color: #FFFFFF; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 4px 12px rgba(92,91,91,0.3);">
+
+        <h4 class="text-center text-4xl sm:text-4xl font-extrabold mb-6"
+            style="color:#40976d; text-shadow: 0 0 4px rgba(255,255,255,0.5);">
+          Formulario de Registro
+        </h4>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="space-y-4 flex flex-col justify-center text-base sm:text-lg">
+
+          <div>
+            <input id="nombre" formControlName="nombre" placeholder="Nombre"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+                   style="background-color: #e0f6ec;">
+          </div>
+
+          <div>
+            <input id="apellidos" formControlName="apellidos" placeholder="Apellidos"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+                   style="background-color: #e0f6ec;">
+          </div>
+
+          <div>
+            <input id="dni" formControlName="dni" placeholder="DNI"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+                   style="background-color: #e0f6ec;">
+          </div>
+
+          <div>
+            <input id="direccion" formControlName="direccion" placeholder="Dirección"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+                   style="background-color: #e0f6ec;">
+          </div>
+
+          <div>
+            <input id="email" formControlName="email" placeholder="Email"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+                   style="background-color: #e0f6ec;">
+          </div>
+
+          <div>
+            <input id="contrasena" type="password" formControlName="contrasena" placeholder="Contraseña"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+                   style="background-color: #e0f6ec;">
+          </div>
+
+          <div>
+            <input id="confirmarContrasena" type="password" formControlName="confirmarContrasena" placeholder="Confirmar Contraseña"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+                   style="background-color: #e0f6ec;">
+          </div>
+
+          <div *ngIf="errorMessage" class="text-red-700 text-center font-semibold">
+            {{ errorMessage }}
+          </div>
+
+          <div class="flex justify-center mt-4">
+            <button type="submit"
+                    [disabled]="registerForm.invalid"
+                    class="w-36 px-5 py-6 rounded-full font-bold text-2xl text-white shadow-md transition disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-green-700"
+                    style="background-color:#2a6f4f; color: #e1f6ec;">
+              Registrarse
+            </button>
+          </div>
+
+
+        </form>
+      </div>
+
+
+    </div>
+
+
+    <!-- Botones a la izquierda -->
+    <div class="absolute top-1/2 left-8 transform -translate-y-1/2 flex flex-col items-start space-y-6">
+      <button (click)="router.navigate(['/inicio'])"
+              class="text-black bg-white font-bold text-2xl sm:text-3xl md:text-4xl hover:text-gray-200 text-left px-4 py-2 rounded transition-colors duration-300">
+        Inicio
+      </button>
+      <button
+        (click)="router.navigate(['/login'])"
+        class="bg-blue-900 rounded-full px-6 py-3 text-2xl sm:text-3xl md:text-3xl font-bold hover:bg-blue-500 transition-colors duration-300"
+        style="color: #97e7f5;"
+      >
+        Volver a Login
+      </button>
+    </div>
+
+  </main>
+  <!-- Footer -->
+  <footer class="bg-black py-8 relative">
+    <div class="container mx-auto px-4 flex items-center justify-between">
+
+      <!-- ICONOS IZQUIERDA -->
+      <div class="flex items-center space-x-6">
+        <img src="/facebook.png" alt="Facebook" class="h-8 w-8 object-contain cursor-pointer">
+        <img src="/instagram.png" alt="Instagram" class="h-8 w-8 object-contain cursor-pointer">
+        <img src="/twitter.png" alt="Twitter" class="h-8 w-8 object-contain cursor-pointer">
+      </div>
+
+      <!-- TEXTO CENTRADO -->
+      <p class="text-white text-center flex-1">
+        © 2025 Arteando. Todos los derechos reservados.
+      </p>
+
+      <!-- LINKS DERECHA - ABREN MODALES -->
+      <div class="flex items-center space-x-4 text-white">
+        <button (click)="abrirModal('legal')" class="hover:underline">Aviso Legal</button>
+        <button (click)="abrirModal('privacidad')" class="hover:underline">Política de Privacidad</button>
+      </div>
+
+    </div>
+  </footer>
+
+
+  <!-- MODAL - AVISO LEGAL -->
+
+  <div
+    *ngIf="modalActivo === 'legal'"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-black rounded-2xl shadow-2xl p-8 max-w-lg w-full text-center relative animate-fade-in">
+
+      <button
+        class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold"
+        (click)="cerrarModal()"
+      >×</button>
+      <img src="/aviso.gif" class="mx-auto mb-4 w-40 " alt="modal aviso" />
+
+      <h2 class="text-2xl font-bold mb-2" style="color:#E07A5F;">
+        Aviso Legal
+      </h2>
+
+      <p class="text-white leading-relaxed">
+        Este sitio web, <strong>Arteando</strong>, es un espacio digital dedicado a la difusión artística.
+        Toda la información, imágenes y recursos aquí publicados pertenecen a sus respectivos autores.
+        El uso indebido, reproducción no autorizada o distribución de cualquier contenido está
+        estrictamente prohibido según la legislación vigente.
+        <br><br>
+        Arteando no se hace responsable del uso que terceros hagan del material disponible en la
+        plataforma. Al acceder a este sitio aceptas cumplir con estas condiciones legales.
+      </p>
+
+      <button
+        (click)="cerrarModal()"
+        class="mt-6 text-white px-6 py-2 rounded-lg transition"
+        style="background-color:#E07A5F;"
+        onmouseover="this.style.backgroundColor='#cc684f'"
+        onmouseout="this.style.backgroundColor='#E07A5F'"
+      >
+        Entendido
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- MODAL - POLÍTICA PRIVACIDAD -->
+
+  <div
+    *ngIf="modalActivo === 'privacidad'"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full text-center relative animate-fade-in">
+
+      <button
+        class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold"
+        (click)="cerrarModal()"
+      >×</button>
+      <img src="/modal.gif" class="mx-auto mb-4 w-40 " alt="modal privacidad" />
+
+
+      <h2 class="text-2xl font-bold mb-2" style="color:#E07A5F;">
+        Política de Privacidad
+      </h2>
+
+      <p class="text-gray-700 leading-relaxed">
+        En <strong>Arteando</strong> respetamos tu privacidad. Los datos personales que ingreses en
+        nuestra plataforma serán utilizados únicamente con fines de navegación, mejora de la experiencia
+        y comunicación directa contigo cuando sea necesario.
+        <br><br>
+        No compartimos tu información con terceros y puedes solicitar en cualquier momento la
+        modificación o eliminación de tus datos. Al utilizar Arteando, aceptas nuestra política de
+        tratamiento responsable y seguro de la información.
+      </p>
+
+      <button
+        (click)="cerrarModal()"
+        class="mt-6 text-white px-6 py-2 rounded-lg transition"
+        style="background-color:#E07A5F;"
+        onmouseover="this.style.backgroundColor='#cc684f'"
+        onmouseout="this.style.backgroundColor='#E07A5F'"
+      >
+        Entendido
+      </button>
+
+    </div>
+
+  </div>
+</div>
