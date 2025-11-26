@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-inicio',
@@ -9,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class InicioComponent implements OnInit {
 
-  constructor() { }
+  constructor(public router: Router) {}
 
   ngOnInit(): void {
     // Código de inicialización

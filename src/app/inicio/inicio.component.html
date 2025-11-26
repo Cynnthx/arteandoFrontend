@@ -3,6 +3,11 @@
   <!-- Main -->
   <main class="flex flex-1 relative">
 
+    <!-- Imagen esquina inferior izquierda -->
+    <img src="/bigbang.gif"
+         alt="Imagen inferior izquierda"
+         class="absolute left-4 bottom-[13px] w-84 md:w-92 lg:w-100 h-84 md:h-92 lg:h-80 object-cover rounded-lg shadow-lg z-50 transition-transform duration-500 hover:scale-110">
+
     <!-- Imagen en la esquina superior izquierda con efecto hover -->
     <img src="logo4-Photoroom.png" alt="Logo"
          class="absolute top-4 left-4 w-60 h-60 object-cover rounded-full shadow-lg transition-transform duration-500 hover:scale-110">
@@ -10,7 +15,7 @@
     <!-- TÍTULO IZQUIERDA -->
     <p class="absolute left-0 top-1/2 -translate-y-1/2 translate-x-[310px]
        text-left text-3xl sm:text-4xl md:text-5xl font-extrabold font-black text-black"
-       style="-webkit-text-stroke: 1px black; text-shadow: 0 0 4px rgb(255,255,255);">
+       style="-webkit-text-stroke: 1px #000000; text-shadow: 0 0 4px rgb(255,255,255);">
       Explora, aprende y
     </p>
 
@@ -41,15 +46,21 @@
     <!-- Botones a la derecha de toda la pantalla -->
     <div class="absolute top-1/2 right-8 transform -translate-y-1/2 flex flex-col items-end space-y-6">
 
-      <a routerLink="/login"
-         class="text-white bg-black font-bold text-2xl sm:text-3xl md:text-4xl hover:text-gray-200 text-right px-4 py-2 rounded transition-colors duration-300">
+      <!-- Ahora -->
+      <button
+        (click)="router.navigate(['/login'])"
+        class="text-black bg-white font-bold text-2xl sm:text-3xl md:text-4xl hover:text-gray-200 text-right px-4 py-2 rounded transition-colors duration-300"
+      >
         Login
-      </a>
+      </button>
 
-      <a routerLink="/explora"
-         class="text-white bg-black font-bold text-2xl sm:text-3xl md:text-4xl hover:text-gray-200 text-right px-4 py-2 rounded transition-colors duration-300">
+
+      <button
+        (click)="router.navigate(['/explora'])"
+        class="text-white bg-black font-bold text-2xl sm:text-3xl md:text-4xl hover:text-gray-200 text-right px-4 py-2 rounded transition-colors duration-300"
+      >
         Explora
-      </a>
+      </button>
     </div>
 
   </main>
@@ -92,7 +103,7 @@
         class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold"
         (click)="cerrarModal()"
       >×</button>
-      <img src="/aviso.gif" class="mx-auto mb-4 w-40 " alt="Logo Granja Gaia" />
+      <img src="/aviso.gif" class="mx-auto mb-4 w-40 " alt="modal aviso" />
 
       <h2 class="text-2xl font-bold mb-2" style="color:#E07A5F;">
         Aviso Legal
@@ -135,7 +146,7 @@
         class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold"
         (click)="cerrarModal()"
       >×</button>
-      <img src="/modal.gif" class="mx-auto mb-4 w-40 " alt="Logo Granja Gaia" />
+      <img src="/modal.gif" class="mx-auto mb-4 w-40 " alt="modal privacidad" />
 
 
       <h2 class="text-2xl font-bold mb-2" style="color:#E07A5F;">
