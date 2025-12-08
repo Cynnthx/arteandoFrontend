@@ -61,7 +61,7 @@ export class RegistroComponent {
 
   onRegister() {
     if (!this.esDniValido(this.registerForm.value.dni)) {
-      this.errorMessage = 'DNI incorrecto.';
+      this.errorMessage = 'Debes ingresar un DNI válido';
       return;
     }
 
