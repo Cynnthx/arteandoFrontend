@@ -6,7 +6,7 @@ export enum Rol {
 
 export interface AuthenticationDTO {
   token: string;  // JWT
-  // Puedes agregar otros campos que devuelva el backend
+  mensaje?: string
 }
 
 
