@@ -45,12 +45,16 @@ export class LoginComponent {
   get contrasena() {
     return this.loginForm.get('contrasena');
   }
-
   onLogin() {
+    // Si el formulario NO es válido → mostrar error, NO navegar
     if (!this.loginForm.valid) {
       this.errorMessage = 'Por favor, complete todos los campos correctamente.';
       return;
     }
+
+    // Si es válido → navegar a perfil
+    this.router.navigate(['/perfil']);
+
 
     const usuario: Usuario = {
       email: this.loginForm.value.email,
