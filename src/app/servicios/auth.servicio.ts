@@ -1,57 +1,95 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-import {AuthenticationDTO, Usuario} from '../modelos/usuario';
+import {catchError, Observable, tap} from 'rxjs';
+import {Router} from '@angular/router';
+import Swal from 'sweetalert2';
+import {ActualizarHeaderService} from './actualizar-header.servicio';
+import {ErrorHandlerService} from './error-handler-service';
+import { jwtDecode } from 'jwt-decode';
 
+
+
+interface LoginResponse {
+  token: string;
+  rol: string;
+  usuarioId:number;
+  clienteId:number | null;
+}
+
+interface CustomJwtPayload {
+  userId: string;
+  rol: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthServicio {
   private apiUrl = 'http://localhost:8080/api/usuarios';
+  private readonly userKey = 'auth_user';
 
-  private tokenKey = 'auth_token';
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private errorHandler: ErrorHandlerService,
+    private actualizarHeader: ActualizarHeaderService
+  ) {}
 
-  constructor(private http: HttpClient) {}
-
-  // Registro de usuario
-  registrar(usuario: Usuario): Observable<AuthenticationDTO> {
-    return this.http.post<AuthenticationDTO>(`${this.apiUrl}/registro`, usuario).pipe(
-      tap(resp => {
-        if (resp.token) localStorage.setItem(this.tokenKey, resp.token);
-      })
-    );
+  login(email: string, contrasena: string): Observable<LoginResponse> {
+    const body = { email, contrasena };
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, body);
   }
 
-  // Login
-  login(usuario: Usuario): Observable<AuthenticationDTO> {
-    return this.http.post<AuthenticationDTO>(`${this.apiUrl}/login`, usuario).pipe(
-      tap(resp => {
-        if (resp.token) localStorage.setItem(this.tokenKey, resp.token);
-      })
-    );
+  registro(userData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/registro/cliente`, userData)
+      .pipe(catchError(this.errorHandler.handleError));
   }
 
-  // Obtener perfil del usuario autenticado
-  obtenerPerfil(): Observable<any> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${localStorage.getItem(this.tokenKey) || ''}`
+  getRole(): string | null {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode<CustomJwtPayload>(token);
+        return decodedToken.rol;
+      } catch (error) {
+        console.error("Error al decodificar el token:", error);
+      }
+    }
+    return null;
+  }
+
+  getCurrentUserId(): number | null {
+    return localStorage.getItem('usuarioId')
+      ? parseInt(localStorage.getItem('usuarioId')!, 10)
+      : null;
+  }
+
+
+  getAuthHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.getToken()}`
     });
-    return this.http.get(`${this.apiUrl}/perfil`, { headers });
   }
 
-  // Logout
-  logout(): void {
-    localStorage.removeItem(this.tokenKey);
-  }
 
-  // Obtener token
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return localStorage.getItem('token');
   }
 
-  // Saber si el usuario está logueado
-  estaAutenticado(): boolean {
-    return !!this.getToken();
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.router.navigate(['/']);
+    Swal.fire({
+      title: 'Sesión cerrada',
+      text: 'Has salido de tu cuenta correctamente',
+      icon: 'success',
+      confirmButtonText: 'OK',
+      background: '#F9F4E3',
+      color: '#7A6448'
+    });
+    this.actualizarHeader.triggerRefreshHeader();
   }
+
 }
