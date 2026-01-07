@@ -1,9 +1,15 @@
-import {Component} from '@angular/core';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
-import {CommonModule} from '@angular/common';
-import {AuthService} from '../servicios/auth.servicio';
-import {AuthenticationDTO, Rol, Usuario} from '../modelos/usuario';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../servicios/auth.servicio';
+import { AuthenticationDTO } from '../modelos/usuario';
+
+// DTO para login
+export interface LoginDTO {
+  email: string;
+  contrasena: string;
+}
 
 @Component({
   selector: 'app-login',
@@ -16,15 +22,6 @@ export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
   modalActivo: string | null = null;
-
-  abrirModal(tipo: string) {
-    this.modalActivo = tipo;
-  }
-
-  cerrarModal() {
-    this.modalActivo = null;
-  }
-
   imgTop = true;
 
   constructor(
@@ -38,38 +35,32 @@ export class LoginComponent {
     });
   }
 
-  get email() {
-    return this.loginForm.get('email');
-  }
+  get email() { return this.loginForm.get('email'); }
+  get contrasena() { return this.loginForm.get('contrasena'); }
 
-  get contrasena() {
-    return this.loginForm.get('contrasena');
-  }
+  abrirModal(tipo: string) { this.modalActivo = tipo; }
+  cerrarModal() { this.modalActivo = null; }
+
   onLogin() {
-    // Si el formulario NO es válido → mostrar error, NO navegar
+
     if (!this.loginForm.valid) {
       this.errorMessage = 'Por favor, complete todos los campos correctamente.';
       return;
     }
 
-    // Si es válido → navegar a perfil
-    this.router.navigate(['/perfil']);
-
-
-    const usuario: Usuario = {
+    const loginData: LoginDTO = {
       email: this.loginForm.value.email,
-      contrasena: this.loginForm.value.contrasena,
-      nombreUsuario: '', // obligatorio en tu interfaz, puedes dejar vacío
-      rol: Rol.CLIENTE
+      contrasena: this.loginForm.value.contrasena
     };
 
-    this.authService.login(usuario).subscribe({
+    this.authService.login(loginData).subscribe({
       next: (response: AuthenticationDTO) => {
         console.log("Respuesta backend:", response);
 
         if (response.token) {
           localStorage.setItem('auth_token', response.token);
-          this.router.navigate(['/events']); // redirigir al login exitoso
+          localStorage.setItem('email', loginData.email);
+          this.router.navigate(['/perfil']);
         } else if (response.mensaje) {
           this.errorMessage = response.mensaje;
         } else {
