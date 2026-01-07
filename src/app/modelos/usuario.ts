@@ -10,12 +10,21 @@ export interface AuthenticationDTO {
 }
 
 
+export interface TestUsuario {
+  id: number;
+  titulo: string;
+  puntaje: number;
+}
+
 export interface Usuario {
   id?: number;
   nombreUsuario: string;
   email: string;
   rol: Rol;
-  contrasena?: string;
-  token?: string;
+  foto?: string;
+  dni?: string;
+  tests?: TestUsuario[];
+
+
 
 }
