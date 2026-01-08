@@ -6,14 +6,18 @@ import Swal from 'sweetalert2';
 import {ActualizarHeaderService} from './actualizar-header.servicio';
 import {ErrorHandlerService} from './error-handler-service';
 import { jwtDecode } from 'jwt-decode';
+import {LoginDTO} from '../login/login.component';
 
 
 
-interface LoginResponse {
+export interface LoginResponse {
   token: string;
+  mensaje: string;
+  email: string;
+  usuarioId: number;
   rol: string;
-  usuarioId:number;
-  clienteId:number | null;
+  nombreUsuario: string;
+  nombreCompleto: string;
 }
 
 interface CustomJwtPayload {
@@ -35,9 +39,9 @@ export class AuthServicio {
     private actualizarHeader: ActualizarHeaderService
   ) {}
 
-  login(email: string, contrasena: string): Observable<LoginResponse> {
-    const body = { email, contrasena };
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, body);
+
+  login(data: LoginDTO): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, data);
   }
 
   registro(userData: any): Observable<any> {
@@ -74,8 +78,9 @@ export class AuthServicio {
 
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return localStorage.getItem('auth_token');
   }
+
 
   logout(): void {
     localStorage.removeItem('token');
