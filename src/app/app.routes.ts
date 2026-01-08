@@ -5,6 +5,7 @@ import {RegistroComponent} from './registro/registro.component';
 import {PerfilComponent} from './perfil/perfil.component';
 import {TestsComponent} from './tests/tests.component';
 import {PreguntasComponent} from './preguntas/preguntas.component';
+import {TestAdminComponent} from './test-admin/test-admin.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/inicio', pathMatch: 'full' },
@@ -15,6 +16,9 @@ export const routes: Routes = [
   { path: 'perfil', component: PerfilComponent },
   { path: 'tests', component: TestsComponent },
   { path: 'preguntas', component: PreguntasComponent },
+  { path: 'test-admin', component: TestAdminComponent },
+
+
 
 
 
