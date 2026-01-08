@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import {AuthService} from '../servicios/auth.servicio';
+import {AuthServicio} from '../servicios/auth.servicio';
 
 @Component({
   selector: 'app-registro',
@@ -26,7 +26,7 @@ export class RegistroComponent {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    private authService: AuthServicio,
     public router: Router
   ) {
     this.registerForm = this.fb.group({
@@ -70,7 +70,7 @@ export class RegistroComponent {
       delete formData.confirmarContrasena;
       formData.rol = 'cliente';
 
-      this.authService.registrar(formData).subscribe({
+      this.authService.registro(formData).subscribe({
         next: () => this.router.navigate(['/login'], { queryParams: { registered: 'true' } }),
         error: (err) => this.errorMessage = err?.error?.mensaje || 'Error al registrar.'
       });
