@@ -32,13 +32,12 @@ export class PerfilServicio {
 
 // Editar perfil
   editarPerfil(cliente: any) {
-    const token = localStorage.getItem('token');
-    let headers = new HttpHeaders();
-    if (token) {
-      headers = headers.set('Authorization', `Bearer ${token}`);
-    }
-    return this.http.put(`${this.apiUrl}/${cliente.id}`, cliente, { headers });
+    return this.http.put(`${this.apiUrl}/usuario/${cliente.id}`, cliente, {
+      headers: this.authService.getAuthHeaders()
+    });
   }
+
+
 
 
 
