@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../servicios/auth.servicio';
+import { AuthServicio} from '../servicios/auth.servicio';
 import { AuthenticationDTO } from '../modelos/usuario';
 
 // DTO para login
@@ -26,7 +26,7 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    private authService: AuthServicio,
     public router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -54,12 +54,17 @@ export class LoginComponent {
     };
 
     this.authService.login(loginData).subscribe({
-      next: (response: AuthenticationDTO) => {
+      next: (response) => {
         console.log("Respuesta backend:", response);
 
         if (response.token) {
+          // Guardamos token y datos importantes
           localStorage.setItem('auth_token', response.token);
-          localStorage.setItem('email', loginData.email);
+          localStorage.setItem('email', response.email);
+          localStorage.setItem('usuarioId', response.usuarioId.toString());
+          localStorage.setItem('rol', response.rol);
+
+          // Redirigir a perfil
           this.router.navigate(['/perfil']);
         } else if (response.mensaje) {
           this.errorMessage = response.mensaje;
@@ -72,5 +77,6 @@ export class LoginComponent {
         this.errorMessage = 'Email o contraseña incorrectos. Por favor, inténtelo de nuevo.';
       }
     });
+
   }
 }
