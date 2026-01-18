@@ -1,0 +1,132 @@
+<div class="min-h-screen bg-fondo flex flex-col relative">
+
+  <main class="flex flex-1 relative">
+
+    <img src="logo2-Photoroom.png"
+         alt="Logo"
+         class="absolute top-4 left-4 w-60 h-60 object-cover rounded-full shadow-lg transition-transform duration-500 hover:scale-110">
+
+    <!-- CONTENEDOR CENTRAL -->
+    <div class="flex justify-center items-center w-full">
+
+      <div class="bg-[#81B29A] w-11/12 max-w-[1000px] min-h-[85vh] rounded-2xl
+                  flex flex-col items-center py-10 px-6 shadow-xl">
+
+        <!-- TÍTULO -->
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-10 text-black">
+          Arteando te reta: ¡demuestra cuánto sabes!
+        </h1>
+
+        <!-- TARJETA DE TESTS -->
+        <div class="bg-black w-11/12 max-w-[900px] rounded-2xl p-6 text-white shadow-2xl mt-10">
+
+          <h2 class="text-3xl font-bold mb-4 text-[#81B29A]">
+            Tests Disponibles
+          </h2>
+
+          <!-- Buscador -->
+          <input
+            type="text"
+            placeholder="Buscar test..."
+            [(ngModel)]="busqueda"
+            (input)="filtrarTests()"
+            class="w-full mb-4 px-4 py-3 rounded-lg text-black text-lg
+                   focus:outline-none focus:ring-2 focus:ring-[#81B29A]"
+          />
+
+          <!-- LISTA -->
+          <div class="space-y-3 max-h-[400px] overflow-y-auto">
+
+            <button
+              *ngFor="let test of testsFiltrados"
+              (click)="irAlTest(test)"
+              class="w-full text-left px-4 py-3 bg-gray-700 rounded-lg
+                     hover:bg-[#81B29A] transition-colors">
+
+              <p class="font-bold text-lg">
+                {{ test.titulo }}
+              </p>
+
+              <p class="text-sm text-gray-300">
+                {{ test.categoria.nombre }} · {{ test.dificultad }}
+              </p>
+
+            </button>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTÓN PERFIL -->
+    <div class="absolute top-1/2 right-8 transform -translate-y-1/2">
+      <button
+        (click)="router.navigate(['/perfil'])"
+        class="text-black bg-white font-bold text-3xl
+               px-4 py-2 rounded hover:bg-gray-200">
+        Ir a Mi Perfil
+      </button>
+    </div>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer class="bg-black py-8 relative">
+    <div class="container mx-auto px-4 flex items-center justify-between">
+      <div class="flex items-center space-x-6">
+        <img src="/facebook.png" alt="Facebook" class="h-8 w-8 object-contain cursor-pointer">
+        <img src="/instagram.png" alt="Instagram" class="h-8 w-8 object-contain cursor-pointer">
+        <img src="/twitter.png" alt="Twitter" class="h-8 w-8 object-contain cursor-pointer">
+      </div>
+      <p class="text-white text-center flex-1">© 2025 Arteando. Todos los derechos reservados.</p>
+      <div class="flex items-center space-x-4 text-white">
+        <button (click)="abrirModal('legal')" class="hover:underline">Aviso Legal</button>
+        <button (click)="abrirModal('privacidad')" class="hover:underline">Política de Privacidad</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODALES LEGALES -->
+  <div *ngIf="modalActivo === 'legal'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+    <div class="bg-black rounded-2xl shadow-2xl p-8 max-w-lg w-full text-center relative animate-fade-in">
+      <button class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold" (click)="cerrarModal()">×</button>
+      <img src="/aviso.gif" class="mx-auto mb-4 w-40 " alt="modal aviso" />
+      <h2 class="text-2xl font-bold mb-2 text-[#81B29A]">Aviso Legal</h2>
+      <p class="text-white leading-relaxed">
+        Este sitio web, <strong>Arteando</strong>, es un espacio digital dedicado a la difusión artística.
+        Toda la información, imágenes y recursos aquí publicados pertenecen a sus respectivos autores.
+        El uso indebido, reproducción no autorizada o distribución de cualquier contenido está
+        estrictamente prohibido según la legislación vigente.
+        <br><br>
+        Arteando no se hace responsable del uso que terceros hagan del material disponible en la
+        plataforma. Al acceder a este sitio aceptas cumplir con estas condiciones legales.
+      </p>
+      <button (click)="cerrarModal()" class="mt-6 text-white px-6 py-2 rounded-lg transition"
+              style="background-color:#81B29A;" onmouseover="this.style.backgroundColor='#6F977F'"
+              onmouseout="this.style.backgroundColor='#81B29A'">Entendido</button>
+    </div>
+  </div>
+
+  <div *ngIf="modalActivo === 'privacidad'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full text-center relative animate-fade-in">
+      <button class="absolute top-3 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold" (click)="cerrarModal()">×</button>
+      <img src="/modal.gif" class="mx-auto mb-4 w-40 " alt="modal privacidad" />
+      <h2 class="text-2xl font-bold mb-2 text-[#81B29A]">Política de Privacidad</h2>
+      <p class="text-gray-700 leading-relaxed">
+        En <strong>Arteando</strong> respetamos tu privacidad. Los datos personales que ingreses en
+        nuestra plataforma serán utilizados únicamente con fines de navegación, mejora de la experiencia
+        y comunicación directa contigo cuando sea necesario.
+        <br><br>
+        No compartimos tu información con terceros y puedes solicitar en cualquier momento la
+        modificación o eliminación de tus datos. Al utilizar Arteando, aceptas nuestra política de
+        tratamiento responsable y seguro de la información.
+      </p>
+      <button (click)="cerrarModal()" class="mt-6 text-white px-6 py-2 rounded-lg transition"
+              style="background-color:#81B29A;" onmouseover="this.style.backgroundColor='#6F977F'"
+              onmouseout="this.style.backgroundColor='#81B29A'">Entendido</button>
+    </div>
+  </div>
+
+</div>
