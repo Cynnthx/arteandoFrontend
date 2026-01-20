@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TestAdminServicio } from '../servicios/test-admin-servicio';
 import { CategoriaServicio } from '../servicios/categoria-servicio';
 import { Categoria } from '../modelos/categoria';
+import {Router} from '@angular/router';
 
 // Lo que devuelve el backend al listar
 export interface TestAdmin {
@@ -48,7 +49,8 @@ export class TestAdminComponent implements OnInit {
 
   constructor(
     private testAdminServicio: TestAdminServicio,
-    private categoriaServicio: CategoriaServicio
+    private categoriaServicio: CategoriaServicio,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -79,6 +81,10 @@ export class TestAdminComponent implements OnInit {
         alert('Error cargando las categorías');
       }
     });
+  }
+
+  gestionarPreguntas(testId: number) {
+    this.router.navigate(['/test-admin/preguntas', testId]);
   }
 
   // ======================
@@ -167,4 +173,6 @@ export class TestAdminComponent implements OnInit {
   getNombreCategoria(id: number): string {
     return this.categorias.find(c => c.id === id)?.nombre || '';
   }
+
+
 }
