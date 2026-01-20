@@ -18,6 +18,7 @@ export interface LoginResponse {
   rol: string;
   nombreUsuario: string;
   nombreCompleto: string;
+  clienteId?: number; // (con el ? por si es admin)
 }
 
 interface CustomJwtPayload {
@@ -49,8 +50,9 @@ export class AuthServicio {
       .pipe(catchError(this.errorHandler.handleError));
   }
 
+
   getRole(): string | null {
-    const token = localStorage.getItem('token');
+    const token = this.getToken(); // <--- metodo centralizado que busca 'auth_token'
     if (token) {
       try {
         const decodedToken = jwtDecode<CustomJwtPayload>(token);
@@ -83,9 +85,14 @@ export class AuthServicio {
 
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    this.router.navigate(['/']);
+    // aqui borramos lo relacionado con la sesion iniciada
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('rol');
+    localStorage.removeItem('usuarioId');
+    localStorage.removeItem('email');
+
+    this.router.navigate(['/login']);
+
     Swal.fire({
       title: 'Sesión cerrada',
       text: 'Has salido de tu cuenta correctamente',
