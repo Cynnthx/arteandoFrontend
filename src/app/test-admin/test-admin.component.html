@@ -12,9 +12,12 @@
         class="bg-black text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-800">
         + Crear nuevo Test
       </button>
+
     </div>
 
-    <!-- LISTA DE TESTS -->
+    <!-- =========================
+         LISTA DE TESTS
+    ========================== -->
     <div class="bg-black rounded-xl p-4 text-white space-y-3 max-h-[400px] overflow-y-auto">
 
       <div *ngFor="let test of tests"
@@ -22,9 +25,15 @@
 
         <div>
           <p class="font-bold text-lg">{{ test.titulo }}</p>
+
+          <!-- =========================
+               AQUI ES DONDE SE MUESTRA LA CATEGORIA CORRECTA
+               Usamos directamente test.categoriaNombre
+          ========================== -->
           <p class="text-sm text-gray-300">
-            {{ test.dificultad }} · {{ getNombreCategoria(test.categoriaId) }}
+            {{ test.dificultad }} · {{ test.categoriaNombre }}
           </p>
+
         </div>
 
         <div class="flex space-x-4 text-xl">
@@ -41,7 +50,9 @@
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- =========================
+     MODAL DE CREAR / EDITAR TEST
+========================== -->
 <div *ngIf="modalAbierto"
      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
 
@@ -66,16 +77,14 @@
       class="w-full mb-3 p-2 border rounded"
       [(ngModel)]="formTest.dificultad">
       <option value="">Selecciona dificultad</option>
-      <option value="FACIL">Fácil</option>
-      <option value="MEDIA">Media</option>
-      <option value="DIFICIL">Difícil</option>
+      <option value="fácil">Fácil</option>
+      <option value="media">Media</option>
+      <option value="difícil">Difícil</option>
     </select>
 
-    <select
-      class="w-full mb-6 p-2 border rounded"
-      [(ngModel)]="formTest.categoriaId">
-      <option value="0">Selecciona categoría</option>
-      <option *ngFor="let c of categorias" [value]="c.id">
+    <select [(ngModel)]="formTest.categoriaId" class="w-full mb-3 p-2 border rounded">
+      <option [ngValue]="0">Selecciona categoría</option>
+      <option *ngFor="let c of categorias" [ngValue]="c.id">
         {{ c.nombre }}
       </option>
     </select>
