@@ -3,5 +3,6 @@ export interface TestAdmin {
   titulo: string;
   descripcion: string;
   dificultad: string;
-  categoriaId: number;
+  categoriaNombre: string;
 }
+// para listar los tests en el admin
