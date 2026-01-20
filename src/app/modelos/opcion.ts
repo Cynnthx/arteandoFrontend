@@ -1,7 +1,6 @@
-export interface Opcion {
-  id: number;
+export interface OpcionDTO {
+  id?: number;
   texto: string;
   esCorrecta: boolean;
   preguntaId: number;
-  preguntaTexto?: string;
 }
