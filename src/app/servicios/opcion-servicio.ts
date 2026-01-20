@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Opcion } from '../modelos/opcion';
+import { OpcionDTO } from '../modelos/opcion';
+import { AuthServicio } from './auth.servicio';
 
 @Injectable({
   providedIn: 'root'
@@ -9,21 +10,30 @@ import { Opcion } from '../modelos/opcion';
 export class OpcionServicio {
   private apiUrl = 'http://localhost:8080/api/opciones';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthServicio
+  ) {}
 
-  listarPorPregunta(preguntaId: number): Observable<Opcion[]> {
-    return this.http.get<Opcion[]>(`${this.apiUrl}/pregunta/${preguntaId}`);
+  listarPorPregunta(preguntaId: number): Observable<OpcionDTO[]> {
+    return this.http.get<OpcionDTO[]>(`${this.apiUrl}/pregunta/${preguntaId}`);
   }
 
-  crear(dto: { texto: string; esCorrecta: boolean; preguntaId: number }) {
-    return this.http.post<Opcion>(`${this.apiUrl}/crear`, dto);
+  crear(dto: { texto: string; esCorrecta: boolean; preguntaId: number }): Observable<OpcionDTO> {
+    return this.http.post<OpcionDTO>(`${this.apiUrl}/crear`, dto, {
+      headers: this.authService.getAuthHeaders()
+    });
   }
 
-  actualizar(id: number, dto: { texto: string; esCorrecta: boolean; preguntaId: number }) {
-    return this.http.put<Opcion>(`${this.apiUrl}/${id}`, dto);
+  actualizar(id: number, dto: { texto: string; esCorrecta: boolean; preguntaId: number }): Observable<OpcionDTO> {
+    return this.http.put<OpcionDTO>(`${this.apiUrl}/${id}`, dto, {
+      headers: this.authService.getAuthHeaders()
+    });
   }
 
-  eliminar(id: number) {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  eliminar(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, {
+      headers: this.authService.getAuthHeaders()
+    });
   }
 }
