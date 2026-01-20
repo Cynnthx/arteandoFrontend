@@ -39,6 +39,17 @@
         <div class="flex space-x-4 text-xl">
           <button (click)="editar(test)">✏️</button>
           <button (click)="eliminar(test.id)">🗑</button>
+          <div class="flex space-x-4 text-xl items-center">
+            <button
+              (click)="gestionarPreguntas(test.id)"
+              title="Gestionar Preguntas"
+              class="hover:scale-110 transition-transform">
+              ⚙️
+            </button>
+
+            <button (click)="editar(test)" title="Editar Test" class="hover:scale-110 transition-transform">✏️</button>
+            <button (click)="eliminar(test.id)" title="Eliminar Test" class="hover:scale-110 transition-transform">🗑</button>
+          </div>
         </div>
       </div>
 
