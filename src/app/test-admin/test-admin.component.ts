@@ -1,23 +1,27 @@
-import {Component, Injectable, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {TestAdminServicio} from '../servicios/test-admin-servicio';
-import {CategoriaServicio} from '../servicios/categoria-servicio';
+import { TestAdminServicio } from '../servicios/test-admin-servicio';
+import { CategoriaServicio } from '../servicios/categoria-servicio';
+import { Categoria } from '../modelos/categoria';
 
-
-interface Categoria {
-  id: number;
-  nombre: string;
-}
-
-interface TestAdmin {
+// Lo que devuelve el backend al listar
+export interface TestAdmin {
   id: number;
   titulo: string;
   descripcion: string;
   dificultad: string;
-  categoriaId: number;
+  categoriaNombre: string;
 }
 
+// Lo que el backend espera al crear
+export interface TestCrear {
+  titulo: string;
+  descripcion: string;
+  dificultad: string;
+  categoriaId: number;
+
+}
 
 @Component({
   selector: 'app-test-admin',
@@ -25,7 +29,6 @@ interface TestAdmin {
   imports: [CommonModule, FormsModule],
   templateUrl: './test-admin.component.html'
 })
-
 export class TestAdminComponent implements OnInit {
 
   modalAbierto = false;
@@ -34,7 +37,8 @@ export class TestAdminComponent implements OnInit {
   categorias: Categoria[] = [];
   tests: TestAdmin[] = [];
 
-  formTest: TestAdmin = {
+  // Formulario simple para crear/editar
+  formTest = {
     id: 0,
     titulo: '',
     descripcion: '',
@@ -61,9 +65,7 @@ export class TestAdminComponent implements OnInit {
       next: (data) => {
         this.tests = data;
       },
-      error: () => {
-        alert('Error cargando los tests');
-      }
+      error: () => alert('Error cargando los tests')
     });
   }
 
@@ -72,7 +74,8 @@ export class TestAdminComponent implements OnInit {
       next: (data) => {
         this.categorias = data;
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error cargando categorías:', err);
         alert('Error cargando las categorías');
       }
     });
@@ -84,19 +87,20 @@ export class TestAdminComponent implements OnInit {
 
   abrirCrear(): void {
     this.editando = false;
-    this.formTest = {
-      id: 0,
-      titulo: '',
-      descripcion: '',
-      dificultad: '',
-      categoriaId: 0
-    };
+    this.formTest = { id: 0, titulo: '', descripcion: '', dificultad: '', categoriaId: 0 };
     this.modalAbierto = true;
   }
 
   editar(test: TestAdmin): void {
     this.editando = true;
-    this.formTest = { ...test };
+    this.formTest = {
+      id: test.id,
+      titulo: test.titulo,
+      descripcion: test.descripcion,
+      dificultad: test.dificultad,
+      // AQUI ES DONDE DEBEMOS CONVERTIR categoriaNombre → categoriaId
+      categoriaId: this.categorias.find(c => c.nombre === test.categoriaNombre)?.id || 0
+    };
     this.modalAbierto = true;
   }
 
@@ -104,55 +108,63 @@ export class TestAdminComponent implements OnInit {
     this.modalAbierto = false;
   }
 
-  // ======================
-  // CRUD
-  // ======================
-
+  // CRUD para guardar
   guardar(): void {
-    const payload = {
-      titulo: this.formTest.titulo,
-      descripcion: this.formTest.descripcion,
+    if (!this.formTest.titulo || !this.formTest.descripcion || !this.formTest.dificultad || this.formTest.categoriaId === 0) {
+      alert('Completa todos los campos');
+      return;
+    }
+
+    const testDTO: TestCrear = {
+      titulo: this.formTest.titulo.trim(),
+      descripcion: this.formTest.descripcion.trim(),
       dificultad: this.formTest.dificultad,
-      categoriaId: this.formTest.categoriaId
+      categoriaId: Number(this.formTest.categoriaId)
     };
 
     if (this.editando) {
-      this.testAdminServicio.actualizar(this.formTest.id, payload).subscribe({
+      // Lógica para EDITAR
+      this.testAdminServicio.actualizar(this.formTest.id, testDTO).subscribe({
         next: () => {
           this.cargarTests();
           this.cerrarModal();
         },
-        error: () => {
-          alert('Error actualizando el test');
+        error: (err) => {
+          console.error('Error editando:', err);
+          alert('Error al actualizar el test');
         }
       });
     } else {
-      this.testAdminServicio.crear(payload).subscribe({
+      // Lógica para CREAR
+      this.testAdminServicio.crear(testDTO).subscribe({
         next: () => {
           this.cargarTests();
           this.cerrarModal();
         },
-        error: () => {
-          alert('Error creando el test');
+        error: (err) => {
+          console.error('Error creando:', err);
+          alert('Error al crear el test');
         }
       });
     }
   }
 
+
+
   eliminar(id: number): void {
     if (!confirm('¿Seguro que quieres eliminar este test?')) return;
 
     this.testAdminServicio.eliminar(id).subscribe({
-      next: () => {
-        this.cargarTests();
-      },
-      error: () => {
-        alert('Error eliminando el test');
-      }
+      next: () => this.cargarTests(),
+      error: () => alert('Error eliminando el test')
     });
   }
 
+  // ======================
+  // UTILS
+  // ======================
+
   getNombreCategoria(id: number): string {
-    return this.categorias.find(c => c.id === id)?.nombre ?? '';
+    return this.categorias.find(c => c.id === id)?.nombre || '';
   }
 }
