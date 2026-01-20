@@ -6,6 +6,7 @@ import {PerfilComponent} from './perfil/perfil.component';
 import {TestsComponent} from './tests/tests.component';
 import {PreguntasComponent} from './preguntas/preguntas.component';
 import {TestAdminComponent} from './test-admin/test-admin.component';
+import {adminGuard} from './seguridad/admin.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/inicio', pathMatch: 'full' },
@@ -15,8 +16,9 @@ export const routes: Routes = [
   { path: 'registro', component: RegistroComponent },
   { path: 'perfil', component: PerfilComponent },
   { path: 'tests', component: TestsComponent },
-  { path: 'preguntas', component: PreguntasComponent },
-  { path: 'test-admin', component: TestAdminComponent },
+  { path: 'preguntas/:id', component: PreguntasComponent },
+  { path: 'test-admin', component: TestAdminComponent, canActivate: [adminGuard] },
+
 
 
 
