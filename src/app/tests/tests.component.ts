@@ -49,9 +49,10 @@ export class TestsComponent implements OnInit {
     );
   }
 
-  irAlTest(test: Tests) {
-    // aquí luego se puede ir al test por id
-    this.router.navigate(['/preguntas', test.id]);
+// Al hacer clic en un test de la lista:
+  irAlTest(testId: number) {
+    // Redirige a la ruta que tengo definida en Routes: 'preguntas/:id'
+    this.router.navigate(['/preguntas', testId]);
   }
 
   abrirModal(tipo: string) {
