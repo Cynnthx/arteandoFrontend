@@ -1,24 +1,18 @@
 <div class="min-h-screen bg-fondo flex flex-col relative">
 
-  <!-- Imagen a la derecha, centrada -->
   <img src="/monalisa_davinci.jpg"
        alt="Imagen derecha centrada"
        class="absolute right-4 top-1/2 w-96 md:w-[28rem] lg:w-[32rem] h-auto object-contain rounded-lg shadow-lg transition-transform duration-500 transform -translate-y-[57%]">
-  >
 
-  <!-- Main -->
   <main class="flex flex-1 relative items-center justify-center">
 
-    <!-- Logo superior izquierda -->
     <img src="logo2-Photoroom.png" alt="Logo"
          class="absolute top-4 left-4 w-60 h-60 object-cover rounded-full shadow-lg transition-transform duration-500 hover:scale-110">
 
-    <!-- Contenedor verde centrado -->
     <div class="relative w-10/12 max-w-[700px] h-[91vh] mx-auto flex items-center justify-center"
          style="background-color: #81B29A; border-radius: 1rem;">
 
-      <!-- FORMULARIO REGISTRO -->
-      <div class="w-full max-w-md mx-auto rounded-lg p-8"
+      <div class="w-full max-w-md mx-auto rounded-lg p-8 overflow-y-auto max-h-[85vh]"
            style="background-color: #FFFFFF; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 4px 12px rgba(92,91,91,0.3);">
 
         <h4 class="text-center text-4xl sm:text-4xl font-extrabold mb-6"
@@ -30,68 +24,85 @@
 
           <div>
             <input id="nombre" formControlName="nombre" placeholder="Nombre"
-                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-black"
                    style="background-color: #e0f6ec;">
           </div>
 
           <div>
             <input id="apellidos" formControlName="apellidos" placeholder="Apellidos"
-                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-black"
                    style="background-color: #e0f6ec;">
           </div>
 
           <div>
-            <input id="dni" formControlName="dni" placeholder="DNI"
-                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+            <input id="nombreUsuario" formControlName="nombreUsuario" placeholder="Nickname (mín. 4 caracteres)"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-black"
                    style="background-color: #e0f6ec;">
+            <small *ngIf="registerForm.get('nombreUsuario')?.invalid && registerForm.get('nombreUsuario')?.touched" class="text-red-600 font-bold">
+              El nickname debe tener entre 4 y 20 caracteres.
+            </small>
+          </div>
+
+          <div>
+            <input id="dni" formControlName="dni" placeholder="DNI (12345678X)"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-black"
+                   style="background-color: #e0f6ec;">
+            <small *ngIf="registerForm.get('dni')?.invalid && registerForm.get('dni')?.touched" class="text-red-600 font-bold">
+              DNI no válido (8 números y 1 letra).
+            </small>
           </div>
 
           <div>
             <input id="direccion" formControlName="direccion" placeholder="Dirección"
-                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-black"
                    style="background-color: #e0f6ec;">
           </div>
 
           <div>
             <input id="email" formControlName="email" placeholder="Email"
-                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-black"
                    style="background-color: #e0f6ec;">
+            <small *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-red-600 font-bold">
+              Introduce un email válido.
+            </small>
           </div>
 
           <div>
-            <input id="contrasena" type="password" formControlName="contrasena" placeholder="Contraseña"
-                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+            <input id="contrasena" type="password" formControlName="contrasena" placeholder="Contraseña (mín. 8 caracteres)"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-black"
                    style="background-color: #e0f6ec;">
+            <small *ngIf="registerForm.get('contrasena')?.invalid && registerForm.get('contrasena')?.touched" class="text-red-600 font-bold">
+              La contraseña requiere al menos 8 caracteres.
+            </small>
           </div>
 
           <div>
             <input id="confirmarContrasena" type="password" formControlName="confirmarContrasena" placeholder="Confirmar Contraseña"
-                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-black focus:ring-2 focus:ring-black text-base sm:text-lg"
+                   class="mt-1 block w-full px-3 py-3 rounded-lg text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-black"
                    style="background-color: #e0f6ec;">
+            <small *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('confirmarContrasena')?.touched" class="text-red-600 font-bold">
+              Las contraseñas no coinciden.
+            </small>
           </div>
 
-          <div *ngIf="errorMessage" class="text-red-700 text-center font-semibold">
+          <div *ngIf="errorMessage" class="text-red-700 text-center font-bold bg-red-100 p-2 rounded-lg">
             {{ errorMessage }}
           </div>
 
           <div class="flex justify-center mt-4">
             <button type="submit"
                     [disabled]="registerForm.invalid"
-                    class="w-36 px-5 py-6 rounded-full font-bold text-2xl text-white shadow-md transition disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-green-700"
+                    class="w-48 px-5 py-6 rounded-full font-bold text-2xl text-white shadow-md transition disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-green-700"
                     style="background-color:#2a6f4f; color: #e1f6ec;">
               Registrarse
             </button>
           </div>
 
-
         </form>
       </div>
 
-
     </div>
 
-
-    <!-- Botones a la izquierda -->
     <div class="absolute top-1/2 left-8 transform -translate-y-1/2 flex flex-col items-start space-y-6">
       <button (click)="router.navigate(['/inicio'])"
               class="text-black bg-white font-bold text-2xl sm:text-3xl md:text-4xl hover:text-gray-200 text-left px-4 py-2 rounded transition-colors duration-300">
