@@ -21,7 +21,7 @@ export class PreguntaAdminComponent implements OnInit {
   preguntaSeleccionada: Pregunta | null = null;
 
   // Objetos para los formularios
-  nuevaPregunta = { texto: '', imagen: '' };
+  nuevaPregunta: any = { id: null, texto: '', imagen: '' };
   nuevaOpcion = { texto: '', esCorrecta: false };
 
   constructor(
@@ -46,19 +46,33 @@ export class PreguntaAdminComponent implements OnInit {
   // --- LÓGICA PREGUNTAS ---
   abrirModalPregunta() {
     this.modalTipo = 'pregunta';
-    this.nuevaPregunta = { texto: '', imagen: '' };
+    this.nuevaPregunta = { id: null, texto: '', imagen: '' };
+  }
+
+
+  abrirModalEditarPregunta(pregunta: Pregunta) {
+    this.modalTipo = 'pregunta';
+    this.nuevaPregunta = {
+      id: pregunta.id,
+      texto: pregunta.texto,
+      imagen: pregunta.imagen
+    };
   }
 
   guardarPregunta() {
     if (!this.nuevaPregunta.texto) return alert('El texto es obligatorio');
-
     const dto = { ...this.nuevaPregunta, testId: this.testId };
-    this.preguntasServicio.crear(dto).subscribe({
+
+    const peticion = this.nuevaPregunta.id
+      ? this.preguntasServicio.actualizar(this.nuevaPregunta.id, dto)
+      : this.preguntasServicio.crear(dto);
+
+    peticion.subscribe({
       next: () => {
         this.cargarPreguntas();
         this.cerrarModal();
       },
-      error: (err) => console.error(err)
+      error: (err) => alert('Error al procesar la pregunta')
     });
   }
 
@@ -79,16 +93,25 @@ export class PreguntaAdminComponent implements OnInit {
     if (!this.preguntaSeleccionada || !this.nuevaOpcion.texto) return;
 
     const dto = {
-      ...this.nuevaOpcion,
+      texto: this.nuevaOpcion.texto,
+      esCorrecta: !!this.nuevaOpcion.esCorrecta, // Aseguramos booleano
       preguntaId: this.preguntaSeleccionada.id
     };
 
     this.opcionesServicio.crear(dto).subscribe({
       next: () => {
-        this.cargarPreguntas(); // Recargamos para ver la nueva opción en la lista
+        // Recargamos todas las preguntas del servidor
+        this.preguntasServicio.listarPorTest(this.testId).subscribe(data => {
+          this.preguntas = data;
+          // IMPORTANTE: Actualizamos la referencia de la pregunta seleccionada
+          // para que el modal vea la nueva opción inmediatamente
+          this.preguntaSeleccionada = this.preguntas.find(p => p.id === dto.preguntaId) || null;
+        });
+
+        // Limpiamos el formulario para la siguiente opción
         this.nuevaOpcion = { texto: '', esCorrecta: false };
       },
-      error: (err) => alert('Error al crear opción')
+      error: (err) => alert('Error al crear opción. Revisa si el backend acepta más opciones.')
     });
   }
 
