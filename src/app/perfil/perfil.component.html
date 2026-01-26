@@ -48,23 +48,46 @@
             <div class="space-y-6 w-full max-w-md mx-auto">
 
               <div class="flex justify-between items-center text-2xl">
-                <span class="text-orange-300 font-bold">Usuario:</span>
-                <span class="bg-gray-700 text-white px-4 py-2 rounded-lg">{{ usuario?.nombreUsuario }}</span>
+                <span class="text-orange-300 font-bold">Nombre:</span>
+                <span *ngIf="!editMode" class="bg-gray-700 text-white px-4 py-2 rounded-lg">
+                  {{ usuario?.nombre }}
+                </span>
+                <input *ngIf="editMode" [(ngModel)]="usuario!.nombre"
+                       class="bg-gray-600 text-white px-4 py-2 rounded-lg border-2 border-orange-300 outline-none">
+              </div>
+
+              <div class="flex justify-between items-center text-2xl">
+                <span class="text-orange-300 font-bold">Apellidos:</span>
+                <span *ngIf="!editMode" class="bg-gray-700 text-white px-4 py-2 rounded-lg">
+                  {{ usuario?.apellidos }}
+                </span>
+                <input *ngIf="editMode" [(ngModel)]="usuario!.apellidos"
+                       class="bg-gray-600 text-white px-4 py-2 rounded-lg border-2 border-orange-300 outline-none">
+              </div>
+
+              <div class="flex justify-between items-center text-2xl">
+                <span class="text-orange-300 font-bold">DNI:</span>
+                <span *ngIf="!editMode" class="bg-gray-700 text-white px-4 py-2 rounded-lg">
+                  {{ usuario?.dni }}
+                </span>
+                <input *ngIf="editMode" [(ngModel)]="usuario!.dni"
+                       class="bg-gray-600 text-white px-4 py-2 rounded-lg border-2 border-orange-300 outline-none">
+              </div>
+
+              <div class="flex justify-between items-center text-2xl">
+                <span class="text-orange-300 font-bold">Dirección:</span>
+                <span *ngIf="!editMode" class="bg-gray-700 text-white px-4 py-2 rounded-lg">
+                  {{ usuario?.direccion || 'No definida' }}
+                </span>
+                <input *ngIf="editMode" [(ngModel)]="usuario!.direccion"
+                       class="bg-gray-600 text-white px-4 py-2 rounded-lg border-2 border-orange-300 outline-none">
               </div>
 
               <div class="flex justify-between items-center text-2xl">
                 <span class="text-orange-300 font-bold">Email:</span>
-                <span class="bg-gray-700 text-white px-4 py-2 rounded-lg">{{ usuario?.email }}</span>
-              </div>
-
-              <div class="flex justify-between items-center text-2xl">
-                <span class="text-orange-300 font-bold">Rol:</span>
-                <span class="bg-gray-700 text-white px-4 py-2 rounded-lg">{{ usuario?.rol }}</span>
-              </div>
-
-              <div class="flex justify-between items-center text-2xl" *ngIf="usuario?.dni">
-                <span class="text-orange-300 font-bold">DNI:</span>
-                <span class="bg-gray-700 text-white px-4 py-2 rounded-lg">{{ usuario?.dni }}</span>
+                <span class="bg-gray-800 text-gray-400 px-4 py-2 rounded-lg italic">
+                  {{ usuario?.email }}
+                </span>
               </div>
 
             </div>
