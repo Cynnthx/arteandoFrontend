@@ -33,15 +33,16 @@ export class TestsComponent implements OnInit {
   cargarTests() {
     this.testsServicio.listarTests().subscribe({
       next: (data) => {
+        console.log('Tests recibidos del backend:', data);
         this.tests = data;
         this.testsFiltrados = data;
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error cargando tests:', err);
         alert('Error cargando los tests');
       }
     });
   }
-
   filtrarTests() {
     const term = this.busqueda.toLowerCase();
     this.testsFiltrados = this.tests.filter(test =>
