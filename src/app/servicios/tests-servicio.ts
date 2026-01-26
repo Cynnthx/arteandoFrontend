@@ -1,49 +1,37 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {Tests} from '../modelos/tests';
+import { Tests } from '../modelos/tests';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TestsServicio {
 
-  private apiUrl = 'http://localhost:8080/tests';
+  private apiUrl = 'http://localhost:8080/api/tests';
 
   constructor(private http: HttpClient) {}
 
-  // Obtener todos los tests
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
+  // Solo dejamos lo que el cliente realmente usa en la interfaz
   listarTests(): Observable<Tests[]> {
-    return this.http.get<Tests[]>(`${this.apiUrl}/listar`);
+    return this.http.get<Tests[]>(`${this.apiUrl}/listar`, { headers: this.getHeaders() });
   }
 
-  // Obtener test por id
   obtenerTest(id: number): Observable<Tests> {
-    return this.http.get<Tests>(`${this.apiUrl}/${id}`);
+    return this.http.get<Tests>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 
-  // Crear test
-  crearTest(test: {
-    titulo: string;
-    descripcion: string;
-    dificultad: string;
-    categoriaId: number;
-  }): Observable<Tests> {
-    return this.http.post<Tests>(`${this.apiUrl}/crear`, test);
-  }
-
-  // Actualizar test
-  actualizarTest(id: number, test: {
-    titulo: string;
-    descripcion: string;
-    dificultad: string;
-    categoriaId: number;
-  }): Observable<Tests> {
-    return this.http.put<Tests>(`${this.apiUrl}/${id}`, test);
-  }
-
-  // Eliminar test
-  eliminarTest(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  obtenerTestCompleto(id: number): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = { 'Authorization': `Bearer ${token}` };
+    return this.http.get<any>(`${this.apiUrl}/${id}/completo`, { headers });
   }
 }
