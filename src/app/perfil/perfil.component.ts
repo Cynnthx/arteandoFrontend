@@ -1,17 +1,16 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import {Router, RouterModule} from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; // Importante para el ngModel del HTML
 import { Usuario, TestUsuario } from '../modelos/usuario';
 import { PerfilServicio } from '../servicios/perfil-servicio';
-import {AuthServicio} from '../servicios/auth.servicio';
-
-
-
+import { AuthServicio } from '../servicios/auth.servicio';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './perfil.component.html'
 })
 export class PerfilComponent implements OnInit {
@@ -24,14 +23,12 @@ export class PerfilComponent implements OnInit {
   error: string | null = null;
   editMode = false;
 
-
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     private perfilServicio: PerfilServicio,
     private authServicio: AuthServicio,
-    public router: Router,
-
+    public router: Router
   ) {}
 
   ngOnInit(): void {
@@ -40,9 +37,9 @@ export class PerfilComponent implements OnInit {
 
   cargarPerfil(): void {
     this.perfilServicio.getMiPerfil().subscribe({
-      next: (usuario: Usuario) => {
-        this.usuario = usuario;
-        this.profileImage = usuario.foto || '/logo4-Photoroom.png';
+      next: (data) => {
+        this.usuario = data;
+        this.profileImage = data.foto || 'logo4-Photoroom.png';
       },
       error: (err) => {
         console.error('Error al cargar perfil', err);
@@ -54,16 +51,11 @@ export class PerfilComponent implements OnInit {
   toggleEditMode(): void {
     this.editMode = !this.editMode;
     if (!this.editMode) {
-      this.cargarPerfil();
+      this.cargarPerfil(); // Cancela y recarga datos originales
     }
   }
 
-  logout(): void {
-    localStorage.clear();
-    this.router.navigate(['/login']);
-  }
-
-  // Funciones para manejar imagen
+  // Manejo de imagen
   triggerFileInput() {
     this.fileInput.nativeElement.click();
   }
@@ -75,113 +67,47 @@ export class PerfilComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = () => {
         this.profileImage = reader.result as string;
-        localStorage.setItem('profileImage', this.profileImage);
+        if (this.usuario) this.usuario.foto = this.profileImage;
       };
       reader.readAsDataURL(file);
     }
   }
 
-  abrirModal(tipo: string) { this.modalActivo = tipo; }
-  cerrarModal() { this.modalActivo = null; }
-
-  // Tests y barra de progreso
-  get tests(): TestUsuario[] {
-    return this.usuario?.tests || [];
-  }
-
-  get totalPuntos(): number {
-    return this.tests.reduce((sum, t) => sum + t.puntaje, 0);
-  }
-
-  get barraProgreso(): number {
-    const maxPuntos = 20; // Ajustable
-    return Math.min((this.totalPuntos / maxPuntos) * 100, 100);
-  }
-
-
-  private esDniNieValido(dniNie: string): boolean {
-    if (!dniNie) return false;
-
-    const letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
-    dniNie = dniNie.toUpperCase().trim();
-
-    // NIE
-    if (/^[XYZ]\d{7}[A-Z]$/.test(dniNie)) {
-      const letraInicial = dniNie.charAt(0);
-      const numeroBase = {
-        'X': '0',
-        'Y': '1',
-        'Z': '2'
-      }[letraInicial] + dniNie.substring(1, 8);
-
-      const resto = parseInt(numeroBase) % 23;
-      return dniNie.charAt(8) === letras.charAt(resto);
-    }
-
-    // DNI
-    if (/^\d{8}[A-Z]$/.test(dniNie)) {
-      const numero = parseInt(dniNie.substring(0, 8));
-      const resto = numero % 23;
-      return dniNie.charAt(8) === letras.charAt(resto);
-    }
-
-    return false;
-  }
-
-
   guardarCambios(): void {
     const userId = this.authServicio.getCurrentUserId();
     if (!userId || !this.usuario) {
-      this.error = 'No se pudo identificar tu usuario. Por favor, vuelve a iniciar sesión.';
-      return;
-    }
-
-    const dni = this.usuario.dni || '';
-    if (!this.esDniNieValido(dni)) {
-      this.error = 'DNI o NIE incorrecto.';
+      this.error = 'Sesión inválida.';
       return;
     }
 
     this.loading = true;
-    this.error = null;
-
     this.actualizarDatosUsuario();
   }
 
-
   private actualizarDatosUsuario(): void {
-    const userId = this.authServicio.getCurrentUserId();
-    if (!userId || !this.usuario) {
-      this.handleError(null, 'Sesión inválida. Vuelve a iniciar sesión.');
-      return;
-    }
-
-    this.usuario.id = userId;
-
     this.perfilServicio.editarPerfil(this.usuario).subscribe({
-      next: () => {
+      next: (usuarioActualizado) => {
         this.loading = false;
-        this.error = null;
+        this.editMode = false;
+        this.usuario = usuarioActualizado;
+        Swal.fire('¡Éxito!', 'Perfil actualizado correctamente', 'success');
       },
-      error: (err) => this.handleError(err, 'Error al actualizar los datos')
+      error: (err) => {
+        this.loading = false;
+        this.error = 'No se pudieron guardar los cambios.';
+      }
     });
   }
 
+  // Getters para la vista
+  get tests(): TestUsuario[] { return this.usuario?.tests || []; }
+  get totalPuntos(): number { return this.tests.reduce((sum, t) => sum + t.puntaje, 0); }
+  get barraProgreso(): number { return Math.min((this.totalPuntos / 20) * 100, 100); }
 
-  private handleError(error: any, defaultMessage: string): void {
-    this.loading = false;
-    this.error = error?.message || defaultMessage;
-    // console.error('Error:', error);
-  }
-
-
-
+  abrirModal(tipo: string) { this.modalActivo = tipo; }
+  cerrarModal() { this.modalActivo = null; }
 
   cerrarSesion() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('usuario');
-    localStorage.removeItem('productosComprar');
-    this.router.navigate(['/login']);
+    this.authServicio.logout();
   }
-
 }
