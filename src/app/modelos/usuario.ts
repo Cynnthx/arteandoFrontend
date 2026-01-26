@@ -18,11 +18,14 @@ export interface TestUsuario {
 
 export interface Usuario {
   id?: number;
+  nombre: string;
+  apellidos: string;
   nombreUsuario: string;
   email: string;
   rol: Rol;
   foto?: string;
   dni?: string;
+  direccion?: string;
   tests?: TestUsuario[];
 
 
