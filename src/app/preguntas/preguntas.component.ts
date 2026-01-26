@@ -1,19 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-
-interface Opcion {
-  texto: string;
-  correcta: boolean;
-}
-
-interface Pregunta {
-  texto: string;
-  imagen: string;
-  opciones: Opcion[];
-  seleccionada?: Opcion | null;
-}
+import { Router, ActivatedRoute } from '@angular/router';
+import { TestsServicio } from '../servicios/tests-servicio';
+import { AuthServicio } from '../servicios/auth.servicio'; // Importación necesaria
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-preguntas',
@@ -21,111 +12,91 @@ interface Pregunta {
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
-export class PreguntasComponent {
-  modalActivo: string | null = null;
+export class PreguntasComponent implements OnInit {
+  testId!: number;
+  preguntas: any[] = [];
+  tituloTest: string = '';
   puntaje: number | null = null;
-  modalAviso: boolean = false; // Para mostrar el modal de aviso
+  modalAviso: boolean = false;
 
-//no finalizado test
+  constructor(
+    public router: Router,
+    private route: ActivatedRoute,
+    private testsServicio: TestsServicio,
+    private authServicio: AuthServicio // CORRECCIÓN: Inyectado correctamente
+  ) {}
+
+  ngOnInit() {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      this.testId = Number(idParam);
+      this.cargarPreguntasReal();
+    }
+  }
+
+  cargarPreguntasReal() {
+    this.testsServicio.obtenerTestCompleto(this.testId).subscribe({
+      next: (data) => {
+        this.tituloTest = data.titulo;
+        // Mapeamos las preguntas asegurándonos de que tengan un campo para la selección
+        this.preguntas = data.preguntas.map((p: any) => ({ ...p, seleccionada: null }));
+      },
+      error: (err) => console.error("Error cargando el test:", err)
+    });
+  }
+
+  seleccionarOpcion(preguntaIndex: number, opcion: any) {
+    this.preguntas[preguntaIndex].seleccionada = opcion;
+  }
+
+  finalizarTest() {
+    // 1. Validar que todas las preguntas tengan respuesta (Opcional pero recomendado)
+    const todasRespondidas = this.preguntas.every(p => p.seleccionada !== null);
+    if (!todasRespondidas && this.puntaje === null) {
+      Swal.fire('Atención', 'Por favor, responde todas las preguntas antes de finalizar.', 'warning');
+      return;
+    }
+
+    // 2. Calcular aciertos
+    let totalAciertos = 0;
+    this.preguntas.forEach(pregunta => {
+      // Importante: Verifica si en tu BD el campo es 'correcta' o 'esCorrecta'
+      if (pregunta.seleccionada?.correcta === true || pregunta.seleccionada?.esCorrecta === true) {
+        totalAciertos += 1;
+      }
+    });
+
+    this.puntaje = totalAciertos;
+
+    // 3. Guardar en Base de Datos
+    const uId = this.authServicio.getCurrentUserId();
+    const tId = this.testId;
+
+    if (uId && tId) {
+      this.authServicio.sumarPuntosAlCliente(uId, tId, totalAciertos).subscribe({
+        next: () => {
+          Swal.fire({
+            title: '¡Test Guardado!',
+            text: `Has conseguido ${totalAciertos} aciertos.`,
+            icon: 'success',
+            confirmButtonColor: '#81B29A'
+          });
+        },
+        error: (err) => {
+          console.error("Error al guardar puntaje:", err);
+          Swal.fire('Error', 'Se calculó tu nota pero no se pudo conectar con el perfil.', 'error');
+        }
+      });
+    }
+  }
+
   irATests() {
     if (this.puntaje === null) {
-      // Si no ha finalizado el test
       this.modalAviso = true;
     } else {
       this.router.navigate(['/tests']);
     }
   }
 
-// Cerrar modal
-  cerrarAviso() {
-    this.modalAviso = false;
-  }
-
-
-  preguntas: Pregunta[] = [
-    {
-      texto: '¿En qué ciudad se encuentra la Alhambra?',
-      imagen: '/alhambra.jpg',
-      opciones: [
-        { texto: 'Granada', correcta: true },
-        { texto: 'Sevilla', correcta: false },
-        { texto: 'Barcelona', correcta: false },
-        { texto: 'Madrid', correcta: false },
-      ],
-    },
-    {
-      texto: '¿Qué estilo arquitectónico predomina en la Sagrada Familia?',
-      imagen: '/sagrada.jpg',
-      opciones: [
-        { texto: 'Gótico', correcta: false },
-        { texto: 'Modernista', correcta: true },
-        { texto: 'Renacentista', correcta: false },
-        { texto: 'Barroco', correcta: false },
-      ],
-    },
-    {
-      texto: '¿Dónde se encuentra el Coliseo?',
-      imagen: '/coliseo.jpg',
-      opciones: [
-        { texto: 'Roma', correcta: true },
-        { texto: 'Atenas', correcta: false },
-        { texto: 'Florencia', correcta: false },
-        { texto: 'París', correcta: false },
-      ],
-    },
-    {
-      texto: '¿Qué ciudad es famosa por sus canales y arquitectura renacentista?',
-      imagen: '/venecia.jpg',
-      opciones: [
-        { texto: 'Venecia', correcta: true },
-        { texto: 'Ámsterdam', correcta: false },
-        { texto: 'Lisboa', correcta: false },
-        { texto: 'Brujas', correcta: false },
-      ],
-    },
-    {
-      texto: '¿Qué estilo arquitectónico se ve en el Partenón?',
-      imagen: '/partenon-atenas.jpg',
-      opciones: [
-        { texto: 'Dórico', correcta: true },
-        { texto: 'Corintio', correcta: false },
-        { texto: 'Gótico', correcta: false },
-        { texto: 'Románico', correcta: false },
-      ],
-    },
-    {
-      texto: '¿Cuál es la función principal del Taj Mahal?',
-      imagen: '/mahal.jpg',
-      opciones: [
-        { texto: 'Palacio', correcta: false },
-        { texto: 'Mausoleo', correcta: true },
-        { texto: 'Templo', correcta: false },
-        { texto: 'Fuerte', correcta: false },
-      ],
-    },
-  ];
-
-  constructor(public router: Router) {}
-
-  abrirModal(tipo: string) {
-    this.modalActivo = tipo;
-  }
-
-  cerrarModal() {
-    this.modalActivo = null;
-  }
-
-  seleccionarOpcion(index: number, opcion: Opcion) {
-    this.preguntas[index].seleccionada = opcion;
-  }
-
-  finalizarTest() {
-    let total = 0;
-    for (const pregunta of this.preguntas) {
-      if (pregunta.seleccionada?.correcta) {
-        total += 1;
-      }
-    }
-    this.puntaje = total;
-  }
+  cerrarAviso() { this.modalAviso = false; }
 }
