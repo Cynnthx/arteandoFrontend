@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Importante para el ngModel del HTML
+import { FormsModule } from '@angular/forms';
 import { Usuario, TestUsuario } from '../modelos/usuario';
 import { PerfilServicio } from '../servicios/perfil-servicio';
 import { AuthServicio } from '../servicios/auth.servicio';
@@ -22,6 +22,14 @@ export class PerfilComponent implements OnInit {
   loading: boolean = false;
   error: string | null = null;
   editMode = false;
+  puntajeTotal: number = 0;// Se carga desde el backend
+  historialPuntajes: any [] = [];
+  camposPerfil: Array<{label: string, key: keyof Usuario}> = [
+    {label: 'Nombre', key: 'nombre'},
+    {label: 'Apellidos', key: 'apellidos'},
+    {label: 'DNI', key: 'dni'},
+    {label: 'Dirección', key: 'direccion'}
+  ];
 
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef<HTMLInputElement>;
 
@@ -33,6 +41,8 @@ export class PerfilComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarPerfil();
+    this.cargarPuntajeTotal();
+    this.cargarHistorial();
   }
 
   cargarPerfil(): void {
@@ -48,14 +58,38 @@ export class PerfilComponent implements OnInit {
     });
   }
 
-  toggleEditMode(): void {
-    this.editMode = !this.editMode;
-    if (!this.editMode) {
-      this.cargarPerfil(); // Cancela y recarga datos originales
+  cargarPuntajeTotal(): void {
+    const uId = this.authServicio.getCurrentUserId();
+    if (uId) {
+      this.authServicio.getPuntajeTotal(uId).subscribe({
+        next: (total) => {
+          this.puntajeTotal = total;
+        },
+        error: (err) => console.error("Error al cargar puntos", err)
+      });
     }
   }
 
-  // Manejo de imagen
+  cargarHistorial() {
+    const uId = this.authServicio.getCurrentUserId();
+    if (uId) {
+      this.authServicio.getHistorialPuntajes(uId).subscribe({
+        next: (data) => {
+          // Guardamos los últimos 5 por ejemplo, o todos
+          this.historialPuntajes = data;
+        },
+        error: (err) => console.error("Error al cargar historial", err)
+      });
+    }
+  }
+
+  toggleEditMode(): void {
+    this.editMode = !this.editMode;
+    if (!this.editMode) {
+      this.cargarPerfil();
+    }
+  }
+
   triggerFileInput() {
     this.fileInput.nativeElement.click();
   }
@@ -73,18 +107,11 @@ export class PerfilComponent implements OnInit {
     }
   }
 
+
+
   guardarCambios(): void {
-    const userId = this.authServicio.getCurrentUserId();
-    if (!userId || !this.usuario) {
-      this.error = 'Sesión inválida.';
-      return;
-    }
-
+    if (!this.usuario) return;
     this.loading = true;
-    this.actualizarDatosUsuario();
-  }
-
-  private actualizarDatosUsuario(): void {
     this.perfilServicio.editarPerfil(this.usuario).subscribe({
       next: (usuarioActualizado) => {
         this.loading = false;
@@ -94,15 +121,18 @@ export class PerfilComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        this.error = 'No se pudieron guardar los cambios.';
+        Swal.fire('Error', 'No se pudieron guardar los cambios', 'error');
       }
     });
   }
 
-  // Getters para la vista
+  // Getters actualizados
   get tests(): TestUsuario[] { return this.usuario?.tests || []; }
-  get totalPuntos(): number { return this.tests.reduce((sum, t) => sum + t.puntaje, 0); }
-  get barraProgreso(): number { return Math.min((this.totalPuntos / 20) * 100, 100); }
+
+  // Ahora la barra de progreso usa el puntajeTotal del backend
+  get barraProgreso(): number {
+    return Math.min((this.puntajeTotal / 500) * 100, 100);
+  }
 
   abrirModal(tipo: string) { this.modalActivo = tipo; }
   cerrarModal() { this.modalActivo = null; }
