@@ -57,17 +57,18 @@ export class LoginComponent {
 
     // Llamar al servicio de autenticación
     this.authService.login(loginData).subscribe({
-      next: (response: LoginResponse) => { // usa la interfaz
+      next: (response: LoginResponse) => {
         if (response.token) {
+          // Usamos los nombres de llave que espera tu AuthServicio
           localStorage.setItem('auth_token', response.token);
-          localStorage.setItem('rol', response.rol.toLowerCase());
           localStorage.setItem('usuarioId', response.usuarioId.toString());
+          localStorage.setItem('rol', response.rol.toLowerCase());
           localStorage.setItem('email', response.email);
 
-          if (response.clienteId) {
-            localStorage.setItem('clienteId', response.clienteId.toString());
-          }
+          // Si el backend te da el nombre completo, guárdalo para el perfil
+          if(response.nombreCompleto) localStorage.setItem('nombreCompleto', response.nombreCompleto);
 
+          // Redirección profesional
           if (response.rol.toLowerCase() === 'admin') {
             this.router.navigate(['/test-admin']);
           } else {
@@ -75,10 +76,7 @@ export class LoginComponent {
           }
         }
       },
-      error: (err) => {
-        this.errorMessage = 'Credenciales incorrectas';
-      }
+      error: (err) => { this.errorMessage = 'Credenciales incorrectas'; }
     });
-
   }
 }
