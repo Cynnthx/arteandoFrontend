@@ -104,4 +104,36 @@ export class AuthServicio {
     this.actualizarHeader.triggerRefreshHeader();
   }
 
+
+  sumarPuntosAlCliente(usuarioId: number, testId: number, puntos: number): Observable<any> {
+    const url = `http://localhost:8080/api/puntajes-usuario/crear`;
+    const body = {
+      usuarioId: usuarioId,
+      testId: testId,
+      puntaje: puntos
+    };
+    return this.http.post(url, body, { headers: this.getAuthHeaders() });
+  }
+
+  getPuntajeTotal(usuarioId: number): Observable<number> {
+    return this.http.get<number>(
+      `http://localhost:8080/api/puntajes-usuario/usuario/${usuarioId}/total`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+
+  getHistorialPuntajes(usuarioId: number): Observable<any[]> {
+    return this.http.get<any[]>(
+      `http://localhost:8080/api/puntajes-usuario/usuario/${usuarioId}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+// Asegúrate de guardar el clienteId en el login
+  getClienteId(): number | null {
+    const id = localStorage.getItem('clienteId');
+    return id ? parseInt(id, 10) : null;
+  }
+
 }
