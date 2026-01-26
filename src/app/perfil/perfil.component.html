@@ -2,193 +2,123 @@
 
   <main class="flex flex-1 relative">
 
-    <!-- logo -->
     <img src="logo4-Photoroom.png" alt="Logo"
          class="absolute top-4 left-4 w-60 h-60 object-cover rounded-full shadow-lg transition-transform duration-500 hover:scale-110">
 
-    <img src="/ojo.jpg"
-         alt="Imagen superior derecha"
-         class="absolute top-4 right-4 w-56 md:w-64 lg:w-72 h-56 md:h-64 lg:h-72 object-cover rounded-lg shadow-lg transition-transform duration-500 hover:scale-110"
+    <img src="/ojo.jpg" alt="Imagen decorativa"
+         class="absolute top-4 right-4 w-56 md:w-64 lg:w-72 h-56 md:h-64 lg:h-72 object-cover rounded-lg shadow-lg transition-transform duration-500 hover:scale-110 cursor-pointer"
          [class.z-50]="imgTop"
-         [class.pointer-events-auto]="imgTop"
-         [class.pointer-events-none]="!imgTop"
          (click)="imgTop = false">
 
-    <!-- CONTENEDOR CENTRAL -->
-    <div class="flex justify-center items-center w-full">
+    <div class="flex justify-center items-center w-full pt-20 pb-10">
 
-      <div class="bg-naranja w-11/12 max-w-[1000px] min-h-[85vh] rounded-2xl
-              flex flex-col items-center py-10 px-6 shadow-xl">
+      <div class="bg-naranja w-11/12 max-w-[1000px] min-h-[85vh] rounded-2xl flex flex-col items-center py-10 px-6 shadow-xl">
 
-        <!-- TÍTULO -->
-        <h1 class="text-4xl md:text-5xl font-extrabold mb-10 text-black">
-          MI PERFIL
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-10 text-black uppercase tracking-tighter text-center">
+          Mi Perfil Artístico
         </h1>
 
-        <!-- TARJETA NEGRA -->
-        <div class="bg-black w-11/12 max-w-[900px] rounded-2xl p-10 text-white shadow-2xl
-          grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div class="bg-black w-11/12 max-w-[900px] rounded-2xl p-10 text-white shadow-2xl">
 
-          <!-- FOTO CLIENTE -->
-          <div class="flex flex-col items-center">
-            <img [src]="profileImage"
-                 alt="Imagen de cliente"
-                 class="w-64 h-64 object-cover rounded-xl shadow-xl transition-transform duration-500 hover:scale-105">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="flex flex-col items-center justify-center">
+              <img [src]="profileImage" class="w-64 h-64 object-cover rounded-xl border-4 border-[#81B29A] shadow-2xl">
+              <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)" accept="image/*" />
+              <button class="text-[#81B29A] mt-4 hover:underline font-bold" (click)="triggerFileInput()">
+                Cambiar Avatar
+              </button>
 
-            <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)" accept="image/*" />
-
-            <button class="text-gray-300 mt-3 hover:underline"
-                    (click)="triggerFileInput()">
-              Cambiar Foto
-            </button>
-          </div>
-
-          <!-- DATOS DEL USUARIO -->
-          <div class="flex flex-col items-stretch justify-center">
-            <div class="space-y-6 w-full max-w-md mx-auto">
-
-              <div class="flex justify-between items-center text-2xl">
-                <span class="text-orange-300 font-bold">Nombre:</span>
-                <span *ngIf="!editMode" class="bg-gray-700 text-white px-4 py-2 rounded-lg">
-                  {{ usuario?.nombre }}
-                </span>
-                <input *ngIf="editMode" [(ngModel)]="usuario!.nombre"
-                       class="bg-gray-600 text-white px-4 py-2 rounded-lg border-2 border-orange-300 outline-none">
+              <div class="mt-8 bg-gray-900 border border-[#81B29A] rounded-2xl p-4 flex items-center space-x-4 w-full">
+                <div class="bg-[#81B29A] p-2 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <p class="text-xs text-gray-400 font-bold uppercase">Puntaje Total</p>
+                  <p class="text-3xl font-black text-[#81B29A]">{{ puntajeTotal }} <span class="text-xs text-white">PTS</span></p>
+                  <div class="w-full bg-gray-700 h-1.5 rounded-full mt-1 overflow-hidden">
+                    <div class="bg-[#81B29A] h-full transition-all duration-1000" [style.width.%]="barraProgreso"></div>
+                  </div>
+                </div>
               </div>
+            </div>
 
-              <div class="flex justify-between items-center text-2xl">
-                <span class="text-orange-300 font-bold">Apellidos:</span>
-                <span *ngIf="!editMode" class="bg-gray-700 text-white px-4 py-2 rounded-lg">
-                  {{ usuario?.apellidos }}
-                </span>
-                <input *ngIf="editMode" [(ngModel)]="usuario!.apellidos"
-                       class="bg-gray-600 text-white px-4 py-2 rounded-lg border-2 border-orange-300 outline-none">
-              </div>
+            <div class="flex flex-col justify-center space-y-4">
+              <div *ngFor="let campo of camposPerfil" class="flex flex-col">
+                <span class="text-[#81B29A] font-bold text-sm uppercase tracking-widest">{{campo.label}}</span>
 
-              <div class="flex justify-between items-center text-2xl">
-                <span class="text-orange-300 font-bold">DNI:</span>
-                <span *ngIf="!editMode" class="bg-gray-700 text-white px-4 py-2 rounded-lg">
-                  {{ usuario?.dni }}
-                </span>
-                <input *ngIf="editMode" [(ngModel)]="usuario!.dni"
-                       class="bg-gray-600 text-white px-4 py-2 rounded-lg border-2 border-orange-300 outline-none">
-              </div>
+                <input *ngIf="editMode && usuario" [(ngModel)]="($any(usuario)[campo.key])"
+                       class="bg-gray-800 border-b-2 border-[#81B29A] p-2 outline-none focus:bg-gray-700">
 
-              <div class="flex justify-between items-center text-2xl">
-                <span class="text-orange-300 font-bold">Dirección:</span>
-                <span *ngIf="!editMode" class="bg-gray-700 text-white px-4 py-2 rounded-lg">
-                  {{ usuario?.direccion || 'No definida' }}
-                </span>
-                <input *ngIf="editMode" [(ngModel)]="usuario!.direccion"
-                       class="bg-gray-600 text-white px-4 py-2 rounded-lg border-2 border-orange-300 outline-none">
-              </div>
-
-              <div class="flex justify-between items-center text-2xl">
-                <span class="text-orange-300 font-bold">Email:</span>
-                <span class="bg-gray-800 text-gray-400 px-4 py-2 rounded-lg italic">
-                  {{ usuario?.email }}
+                <span *ngIf="!editMode" class="text-2xl font-light">
+                  {{ usuario ? $any(usuario)[campo.key] : '---' }}
                 </span>
               </div>
 
+              <div class="flex flex-col">
+                <span class="text-gray-500 font-bold text-sm uppercase">Email (Privado)</span>
+                <span class="text-xl text-gray-400 italic">{{ usuario?.email }}</span>
+              </div>
             </div>
           </div>
 
-          <!-- BOTONES DE EDITAR / GUARDAR / CANCELAR -->
-          <div class="bg-gray-50 px-6 py-6 flex flex-col items-center gap-4 mt-6">
-            <button *ngIf="!editMode"
-                    (click)="toggleEditMode()"
-                    class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
-              Editar datos del perfil
+          <div class="mt-10 flex justify-center border-t border-gray-800 pt-6">
+            <button *ngIf="!editMode" (click)="toggleEditMode()"
+                    class="bg-[#81B29A] text-black px-8 py-3 rounded-full font-bold hover:scale-105 transition-transform">
+              EDITAR PERFIL
             </button>
             <div *ngIf="editMode" class="flex gap-4">
-              <button (click)="toggleEditMode()"
-                      class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition-colors">
-                Cancelar
-              </button>
-              <button (click)="guardarCambios()" [disabled]="loading"
-                      class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-green-400 transition-colors">
-                <span *ngIf="!loading">Guardar cambios</span>
-                <span *ngIf="loading">Guardando...</span>
+              <button (click)="toggleEditMode()" class="px-6 py-2 border border-white rounded-full">Cancelar</button>
+              <button (click)="guardarCambios()" [disabled]="loading" class="px-6 py-2 bg-green-600 rounded-full font-bold">
+                {{ loading ? 'Guardando...' : 'Confirmar Cambios' }}
               </button>
             </div>
           </div>
-
-
         </div>
 
-        <!-- BLOQUE DE PUNTOS -->
-        <div class="bg-white w-full max-w-[350px] mt-10 rounded-xl p-6 text-center shadow-lg">
-          <p class="text-xl font-semibold text-gray-700">Puntos totales</p>
-          <p class="text-5xl font-bold text-green-600">{{ totalPuntos }}</p>
-          <button class="mt-3 text-black font-semibold underline hover:text-gray-700 text-3xl"
-                  (click)="abrirModal('tests')">
-            Ver puntos
-          </button>
-        </div>
-
-      </div>
-
-      <!-- MODAL DE TESTS -->
-      <div *ngIf="modalActivo === 'tests'"
-           class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 transition-opacity duration-300">
-        <div class="bg-white rounded-4xl p-8 w-11/12 max-w-lg max-h-[80vh] flex flex-col overflow-y-auto animate-fade-in">
-
-          <!-- Título más grande -->
-          <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center">
-            Tests realizados
+        <div class="bg-white w-11/12 max-w-[900px] mt-8 rounded-2xl p-8 shadow-xl">
+          <h2 class="text-2xl font-black text-black mb-6 flex items-center">
+            <span class="bg-black w-2 h-8 mr-3 rounded-full"></span>
+            ÚLTIMOS TESTS COMPLETADOS
           </h2>
 
-          <!-- Lista de tests con letra más grande -->
-          <div class="space-y-4 text-xl md:text-2xl">
-            <div *ngFor="let test of tests" class="flex justify-between">
-              <span>{{ test.titulo }}</span>
-              <span class="font-bold">{{ test.puntaje }} puntos</span>
+          <div *ngIf="historialPuntajes && historialPuntajes.length > 0; else noTests" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div *ngFor="let item of historialPuntajes"
+                 class="flex justify-between items-center p-4 bg-gray-50 border-l-4 border-black rounded-r-xl hover:bg-gray-100 transition-colors">
+              <div>
+                <p class="font-bold text-lg text-black">{{ item.testTitulo || 'Test de Arte' }}</p>
+                <p class="text-xs text-gray-500 uppercase font-semibold">Completado</p>
+              </div>
+              <div class="text-right">
+                <span class="text-2xl font-black text-[#81B29A]">{{ item.puntaje }}</span>
+                <span class="text-[10px] block text-gray-400 font-bold">PUNTOS</span>
+              </div>
             </div>
           </div>
 
-          <!-- Barra de progreso más visible -->
-          <div class="mt-6 h-4 bg-gray-200 rounded-full">
-            <div class="h-4 bg-orange-400 rounded-full" [style.width.%]="barraProgreso"></div>
-          </div>
-
-          <!-- Botón más grande -->
-          <button class="mt-6 bg-gray-200 text-xl md:text-2xl px-6 py-3 rounded-lg hover:bg-gray-300 w-full"
-                  (click)="cerrarModal()">
-            Cerrar
-          </button>
-
+          <ng-template #noTests>
+            <div class="text-center py-10">
+              <p class="text-gray-400 italic text-lg font-medium">Aún no has realizado ningún test.</p>
+              <button (click)="router.navigate(['/tests'])" class="mt-4 text-black font-black underline">Ir a tests</button>
+            </div>
+          </ng-template>
         </div>
-      </div>
 
+        <button class="mt-8 text-black font-black text-2xl border-b-4 border-black hover:bg-black hover:text-white px-6 py-2 transition-all uppercase tracking-tighter"
+                (click)="abrirModal('tests')">
+          Historial Completo
+        </button>
+      </div>
     </div>
 
-    <!-- BOTONES LATERALES -->
-    <div class="absolute top-1/2 right-8 transform -translate-y-1/2 flex flex-col items-end space-y-6">
-      <button
-        (click)="router.navigate(['/tests'])"
-        class="text-black bg-white font-bold text-2xl sm:text-3xl md:text-4xl hover:text-gray-200
-           text-right px-4 py-2 rounded transition-colors duration-300">
-        Ir a tests
-      </button>
-      <button
-        (click)="router.navigate(['/inicio'])"
-        class="text-white bg-black font-bold text-2xl sm:text-3xl md:text-4xl hover:text-gray-200
-           text-right px-4 py-2 rounded transition-colors duration-300">
-        Ir a Inicio
-      </button>
-
-      <!-- NUEVO BOTÓN DE DESCONECTAR ⭐ -->
-      <button
-        (click)="cerrarSesion()"
-        class="text-red-600 bg-white font-bold text-2xl sm:text-3xl md:text-4xl hover:text-red-300
-       text-right px-4 py-2 rounded transition-colors duration-300">
-        Desconectarme
-      </button>
+    <div class="fixed top-1/2 right-4 transform -translate-y-1/2 flex flex-col space-y-4 z-40">
+      <button (click)="router.navigate(['/tests'])" class="bg-white text-black p-4 rounded-l-xl font-black shadow-lg hover:-translate-x-2 transition-transform border-y border-l border-black">IR A TESTS</button>
+      <button (click)="router.navigate(['/inicio'])" class="bg-black text-white p-4 rounded-l-xl font-black shadow-lg hover:-translate-x-2 transition-transform">INICIO</button>
+      <button (click)="cerrarSesion()" class="bg-red-600 text-white p-4 rounded-l-xl font-black shadow-lg hover:-translate-x-2 transition-transform">SALIR</button>
     </div>
 
   </main>
-
-
   <!-- FOOTER -->
   <footer class="bg-black py-8 relative">
     <div class="container mx-auto px-4 flex items-center justify-between">
