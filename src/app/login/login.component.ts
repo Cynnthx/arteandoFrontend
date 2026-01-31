@@ -54,7 +54,6 @@ export class LoginComponent {
     };
 
 
-
     // Llamar al servicio de autenticación
     this.authService.login(loginData).subscribe({
       next: (response: LoginResponse) => {
