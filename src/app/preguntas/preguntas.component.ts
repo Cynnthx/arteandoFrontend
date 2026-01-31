@@ -50,41 +50,44 @@ export class PreguntasComponent implements OnInit {
   }
 
   finalizarTest() {
-    // 1. Validar que todas las preguntas tengan respuesta (Opcional pero recomendado)
+    // esto es para validar que todas estén respondidas (MANTENER SIEMPRE)
     const todasRespondidas = this.preguntas.every(p => p.seleccionada !== null);
-    if (!todasRespondidas && this.puntaje === null) {
+
+    if (!todasRespondidas) {
       Swal.fire('Atención', 'Por favor, responde todas las preguntas antes de finalizar.', 'warning');
       return;
     }
 
-    // 2. Calcular aciertos
+    // aqui calculamos aciertos
     let totalAciertos = 0;
     this.preguntas.forEach(pregunta => {
-      // Importante: Verifica si en tu BD el campo es 'correcta' o 'esCorrecta'
-      if (pregunta.seleccionada?.correcta === true || pregunta.seleccionada?.esCorrecta === true) {
+      // IMPORTANTE: Accedemos a 'esCorrecta' tal cual viene en el OpcionDTO
+      if (pregunta.seleccionada && pregunta.seleccionada.esCorrecta === true) {
         totalAciertos += 1;
       }
     });
 
     this.puntaje = totalAciertos;
 
-    // 3. Guardar en Base de Datos
+    // guardamos en Base de Datos usando el ID del cliente logueado
     const uId = this.authServicio.getCurrentUserId();
     const tId = this.testId;
 
     if (uId && tId) {
+      // Este método debe impactar en la tabla 'puntaje_usuario' de tu SQL
       this.authServicio.sumarPuntosAlCliente(uId, tId, totalAciertos).subscribe({
         next: () => {
           Swal.fire({
-            title: '¡Test Guardado!',
-            text: `Has conseguido ${totalAciertos} aciertos.`,
+            title: '¡Test Finalizado!',
+            text: `Has conseguido ${totalAciertos} aciertos. Tu perfil ha sido actualizado.`,
             icon: 'success',
             confirmButtonColor: '#81B29A'
           });
+          // Opcional: Recargar el historial aquí si fuera necesario
         },
         error: (err) => {
-          console.error("Error al guardar puntaje:", err);
-          Swal.fire('Error', 'Se calculó tu nota pero no se pudo conectar con el perfil.', 'error');
+          console.error("Error al guardar:", err);
+          Swal.fire('Error', 'No se pudo guardar tu puntuación en el perfil.', 'error');
         }
       });
     }
