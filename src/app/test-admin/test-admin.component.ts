@@ -5,6 +5,7 @@ import { TestAdminServicio } from '../servicios/test-admin-servicio';
 import { CategoriaServicio } from '../servicios/categoria-servicio';
 import { Categoria } from '../modelos/categoria';
 import {Router} from '@angular/router';
+import {AuthServicio} from '../servicios/auth.servicio';
 
 // Lo que devuelve el backend al listar
 export interface TestAdmin {
@@ -50,7 +51,8 @@ export class TestAdminComponent implements OnInit {
   constructor(
     private testAdminServicio: TestAdminServicio,
     private categoriaServicio: CategoriaServicio,
-    private router: Router
+    private router: Router,
+    private authServicio: AuthServicio
   ) {}
 
   ngOnInit(): void {
@@ -175,5 +177,13 @@ export class TestAdminComponent implements OnInit {
     return this.categorias.find(c => c.id === id)?.nombre || '';
   }
 
+  logout(): void {
+    // Borrar token del localStorage
+    localStorage.removeItem('token');
+    this.authServicio.logout();
+
+    // 3. Redirigir al login
+    this.router.navigate(['/login']);
+  }
 
 }
