@@ -8,5 +8,5 @@ export interface Tests {
   titulo: string;
   descripcion: string;
   dificultad: string;
-  categoria: Categoria;
+  categoriaNombre: string;
 }
